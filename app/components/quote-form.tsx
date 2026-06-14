@@ -22,15 +22,27 @@ export function QuoteForm() {
     const form = event.currentTarget;
     const formData = new FormData(form);
 
-    await new Promise((resolve) => setTimeout(resolve, 600));
-
     if (!formData.get("name") || !formData.get("phone") || !formData.get("email")) {
       setStatus("error");
       return;
     }
 
-    setStatus("success");
-    form.reset();
+    try {
+      const response = await fetch("/api/quote", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        setStatus("error");
+        return;
+      }
+
+      setStatus("success");
+      form.reset();
+    } catch {
+      setStatus("error");
+    }
   }
 
   return (
@@ -144,7 +156,7 @@ export function QuoteForm() {
 
           {status === "error" && (
             <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
-              Please fill in your name, phone, and email to continue.
+              Something went wrong sending your request. Please check your details and try again, or call us directly.
             </p>
           )}
 
