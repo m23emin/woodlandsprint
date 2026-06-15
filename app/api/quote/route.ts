@@ -19,6 +19,7 @@ export async function POST(request: Request) {
   const name = getString(formData.get("name"));
   const phone = getString(formData.get("phone"));
   const email = getString(formData.get("email"));
+  const businessName = getString(formData.get("businessName"));
   const service = getString(formData.get("service"));
   const quantity = getString(formData.get("quantity"));
   const needBy = getString(formData.get("needBy"));
@@ -47,6 +48,7 @@ export async function POST(request: Request) {
     ["Name", name],
     ["Phone", phone],
     ["Email", email],
+    ["Business", businessName || "Not specified"],
     ["Service", service || "Not specified"],
     ["Quantity", quantity || "Not specified"],
     ["Need By", needBy || "Not specified"],

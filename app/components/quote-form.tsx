@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { FormEvent, useState } from "react";
 
 const serviceOptions = [
@@ -105,6 +106,17 @@ export function QuoteForm() {
             />
           </Field>
 
+          <Field label="Business Name" htmlFor="businessName">
+            <input
+              id="businessName"
+              name="businessName"
+              type="text"
+              autoComplete="organization"
+              className={inputClass}
+              placeholder="Optional — for bulk or business orders"
+            />
+          </Field>
+
           <div className="grid gap-5 sm:grid-cols-2">
             <Field label="Service Type" htmlFor="service">
               <select id="service" name="service" className={inputClass} defaultValue="">
@@ -142,6 +154,21 @@ export function QuoteForm() {
               className="block w-full text-sm text-muted file:mr-4 file:rounded-lg file:border-0 file:bg-brand/10 file:px-4 file:py-2.5 file:text-sm file:font-semibold file:text-brand hover:file:bg-brand/15"
             />
             <p className="mt-1.5 text-xs text-muted">PNG, JPG, PDF, AI, EPS, or SVG accepted.</p>
+            <div className="mt-3 rounded-xl border border-border bg-background px-4 py-3">
+              <p className="text-xs font-semibold uppercase tracking-wide text-foreground">
+                Before uploading
+              </p>
+              <ul className="mt-2 space-y-1 text-xs text-muted">
+                <li>Transparent background?</li>
+                <li>Correct print size?</li>
+                <li>High resolution (300 DPI)?</li>
+                <li>Not mirrored?</li>
+                <li>No unwanted white box?</li>
+              </ul>
+              <Link href="/artwork-requirements" className="mt-2 inline-block text-xs font-medium text-brand hover:underline">
+                Full artwork guide →
+              </Link>
+            </div>
           </Field>
 
           <Field label="Notes" htmlFor="notes">

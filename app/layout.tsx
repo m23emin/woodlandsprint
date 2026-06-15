@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
+import { ThemeProvider } from "./components/theme-provider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -19,12 +20,20 @@ export const metadata: Metadata = {
     "bulk shirt orders",
     "gang sheets",
   ],
+  icons: {
+    icon: [
+      { url: "/brand/logo-icon.png", sizes: "512x512", type: "image/png" },
+      { url: "/brand/logo-icon.svg", type: "image/svg+xml" },
+    ],
+    apple: "/brand/logo-icon.png",
+  },
   openGraph: {
     title: "Woodlands Print | DTF Transfers & Custom Shirts",
     description:
       "Fast, local custom printing and DTF transfers for businesses and events across North Houston.",
     type: "website",
     locale: "en_US",
+    images: [{ url: "/brand/logo-full.png", width: 1200, height: 630, alt: "Woodlands Print" }],
   },
 };
 
@@ -41,7 +50,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${geistSans.variable} h-full scroll-smooth antialiased`}>
-      <body className="min-h-full bg-background text-foreground">{children}</body>
+      <body className="min-h-full bg-background text-foreground">
+        <ThemeProvider>{children}</ThemeProvider>
+      </body>
     </html>
   );
 }

@@ -1,5 +1,16 @@
+import Link from "next/link";
 import { QuoteForm } from "./components/quote-form";
+import { Logo } from "./components/logo";
+import { SectionHeading } from "./components/section-heading";
+import { SiteFooter } from "./components/site-footer";
+import { SiteHeader } from "./components/site-header";
 import { StickyCta } from "./components/sticky-cta";
+import { FadeIn, StaggerGrid, StaggerItem } from "./components/motion/fade-in";
+import { HeroScene } from "./components/motion/hero-scene";
+import { ParallaxBlob, ParallaxLayer } from "./components/motion/parallax";
+import { SectionDivider } from "./components/motion/section-divider";
+import { TiltCard } from "./components/motion/tilt-card";
+import { faqItems, galleryItems, pricingTiers } from "@/lib/site-config";
 
 const services = [
   {
@@ -60,32 +71,20 @@ const benefits = [
 ];
 
 const serviceAreas = [
-  "The Woodlands",
-  "Spring",
-  "Conroe",
-  "Tomball",
-  "Magnolia",
-  "Richmond",
-  "North Houston",
-  "Surrounding Areas",
+  { label: "The Woodlands", href: "/dtf-transfers-the-woodlands" },
+  { label: "Spring", href: "/custom-shirts-spring-tx" },
+  { label: "Conroe", href: "/gang-sheet-printing-conroe" },
+  { label: "Houston", href: "/dtf-printing-houston" },
+  { label: "Tomball", href: null },
+  { label: "Magnolia", href: null },
+  { label: "Richmond", href: null },
+  { label: "North Houston", href: null },
 ];
 
 export default function Home() {
   return (
     <>
-      <header className="sticky top-0 z-40 border-b border-white/10 bg-brand-dark/95 backdrop-blur-md">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3.5 sm:px-6">
-          <a href="#" className="text-lg font-bold tracking-tight text-white">
-            Woodlands Print
-          </a>
-          <a
-            href="#quote"
-            className="hidden rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-foreground transition hover:bg-accent-hover sm:inline-flex"
-          >
-            Get a Fast Quote
-          </a>
-        </div>
-      </header>
+      <SiteHeader variant="dark" />
 
       <main className="pb-24 sm:pb-0">
         {/* Hero */}
@@ -93,115 +92,295 @@ export default function Home() {
           id="hero"
           className="relative overflow-hidden bg-brand-dark px-4 pb-16 pt-12 text-white sm:px-6 sm:pb-20 sm:pt-16"
         >
+          {/* Parallax blobs */}
+          <ParallaxBlob
+            speed={0.15}
+            className="absolute left-[-10%] top-[-20%] h-[500px] w-[500px] rounded-full bg-brand-light/20 blur-[80px] animate-blob-drift"
+          />
+          <ParallaxBlob
+            speed={0.3}
+            className="absolute right-[-5%] top-[10%] h-[350px] w-[350px] rounded-full bg-accent/10 blur-[60px] animate-blob-drift-reverse"
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 animate-mesh-shift opacity-40"
+            style={{
+              backgroundImage:
+                "radial-gradient(circle at 20% 50%, rgba(201,162,39,0.2) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(42,107,80,0.45) 0%, transparent 40%), radial-gradient(circle at 60% 80%, rgba(201,162,39,0.1) 0%, transparent 35%)",
+            }}
+          />
+          <div className="relative mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-2 lg:gap-16">
+            <div>
+              <FadeIn delay={0.05}>
+                <p className="mb-3 inline-flex items-center rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium uppercase tracking-wider text-white/80 backdrop-blur-sm">
+                  Local Custom Printing
+                </p>
+              </FadeIn>
+              <FadeIn delay={0.12}>
+                <Logo variant="full" onDark className="h-12 sm:h-14" />
+              </FadeIn>
+              <h1 className="sr-only">
+                Woodlands Print — DTF Transfers &amp; Custom Shirts in The Woodlands, TX
+              </h1>
+              <FadeIn delay={0.2}>
+                <p className="mt-4 max-w-xl text-lg text-white/80 sm:text-xl">
+                  DTF Transfers &amp; Custom Shirts
+                </p>
+              </FadeIn>
+              <FadeIn delay={0.28}>
+                <p className="mt-4 max-w-lg text-base leading-relaxed text-white/65">
+                  Premium printing for businesses, events, and creators across North Houston — with fast
+                  quotes and quality you can feel.
+                </p>
+              </FadeIn>
+              <FadeIn delay={0.36} className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+                <a
+                  href="#quote"
+                  className="inline-flex items-center justify-center rounded-xl bg-accent px-7 py-4 text-base font-semibold text-foreground shadow-lg shadow-black/25 transition hover:bg-accent-hover hover:shadow-accent/20"
+                >
+                  Get a Fast Quote
+                </a>
+                <a
+                  href="#services"
+                  className="inline-flex items-center justify-center rounded-xl border border-white/20 px-7 py-4 text-base font-semibold text-white backdrop-blur-sm transition hover:bg-white/10"
+                >
+                  View Services
+                </a>
+              </FadeIn>
+              <ParallaxLayer speed={0.05} className="mt-12">
+                <dl className="grid grid-cols-3 gap-4 border-t border-white/10 pt-8 sm:max-w-md">
+                  <div>
+                    <dt className="text-xs uppercase tracking-wide text-white/50">Turnaround</dt>
+                    <dd className="mt-1 text-sm font-semibold">Fast &amp; Rush</dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs uppercase tracking-wide text-white/50">Quality</dt>
+                    <dd className="mt-1 text-sm font-semibold">Premium Prints</dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs uppercase tracking-wide text-white/50">Service</dt>
+                    <dd className="mt-1 text-sm font-semibold">Local Team</dd>
+                  </div>
+                </dl>
+              </ParallaxLayer>
+            </div>
+
+            <FadeIn delay={0.3} className="mt-10 sm:hidden">
+              <HeroScene />
+            </FadeIn>
+
+            <FadeIn direction="left" delay={0.2} className="hidden sm:block">
+              <HeroScene />
+            </FadeIn>
+          </div>
+        </section>
+
+        <SectionDivider variant="dark" />
+
+        {/* Services */}
+        <section id="services" className="section-soft-top px-4 py-16 sm:px-6 sm:py-20">
+          <div className="mx-auto max-w-6xl">
+            <FadeIn>
+              <SectionHeading
+                eyebrow="What We Do"
+                title="Services"
+                description="From single transfers to full bulk runs, we handle every detail so your order looks professional."
+              />
+            </FadeIn>
+            <StaggerGrid className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {services.map((service) => (
+                <StaggerItem key={service.title}>
+                  <TiltCard className="h-full rounded-2xl">
+                    <article className="group h-full rounded-2xl border border-border bg-surface p-6 shadow-sm transition hover:border-brand/30 hover:shadow-lg">
+                      <div className="mb-4 inline-flex rounded-xl bg-brand/10 p-3 text-brand transition group-hover:bg-brand group-hover:text-white">
+                        {service.icon}
+                      </div>
+                      <h3 className="text-lg font-semibold text-foreground">{service.title}</h3>
+                      <p className="mt-2 text-sm leading-relaxed text-muted">{service.description}</p>
+                    </article>
+                  </TiltCard>
+                </StaggerItem>
+              ))}
+            </StaggerGrid>
+          </div>
+        </section>
+
+        <SectionDivider variant="light" />
+
+        {/* B2B banner */}
+        <section className="relative overflow-hidden border-y border-border bg-brand px-4 py-10 text-white sm:px-6">
           <div
             aria-hidden
             className="pointer-events-none absolute inset-0 opacity-30"
             style={{
-              backgroundImage:
-                "radial-gradient(circle at 20% 50%, rgba(201,162,39,0.15) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(42,107,80,0.4) 0%, transparent 40%)",
+              background:
+                "linear-gradient(105deg, transparent 40%, rgba(201,162,39,0.15) 50%, transparent 60%)",
             }}
           />
-          <div className="relative mx-auto max-w-6xl">
-            <p className="mb-3 inline-flex items-center rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium uppercase tracking-wider text-white/80">
-              Local Custom Printing
-            </p>
-            <h1 className="max-w-2xl text-4xl font-bold leading-tight tracking-tight sm:text-5xl sm:leading-tight lg:text-6xl">
-              Woodlands Print
-            </h1>
-            <p className="mt-4 max-w-xl text-lg text-white/80 sm:text-xl">
-              DTF Transfers &amp; Custom Shirts
-            </p>
-            <p className="mt-4 max-w-lg text-base leading-relaxed text-white/65">
-              Premium printing for businesses, events, and creators across North Houston — with fast
-              quotes and quality you can feel.
-            </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-              <a
-                href="#quote"
-                className="inline-flex items-center justify-center rounded-xl bg-accent px-7 py-4 text-base font-semibold text-foreground shadow-lg shadow-black/20 transition hover:bg-accent-hover"
-              >
-                Get a Fast Quote
-              </a>
-              <a
-                href="#services"
-                className="inline-flex items-center justify-center rounded-xl border border-white/20 px-7 py-4 text-base font-semibold text-white transition hover:bg-white/10"
-              >
-                View Services
-              </a>
+          <FadeIn className="relative mx-auto flex max-w-6xl flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-accent">For Businesses</p>
+              <h2 className="mt-2 text-2xl font-bold sm:text-3xl">Need 25+ shirts or wholesale DTF?</h2>
+              <p className="mt-2 max-w-xl text-sm text-white/75">
+                Team uniforms, event runs, and reseller pricing — built for orders that come back.
+              </p>
             </div>
-            <dl className="mt-12 grid grid-cols-3 gap-4 border-t border-white/10 pt-8 sm:max-w-md">
-              <div>
-                <dt className="text-xs uppercase tracking-wide text-white/50">Turnaround</dt>
-                <dd className="mt-1 text-sm font-semibold">Fast &amp; Rush</dd>
-              </div>
-              <div>
-                <dt className="text-xs uppercase tracking-wide text-white/50">Quality</dt>
-                <dd className="mt-1 text-sm font-semibold">Premium Prints</dd>
-              </div>
-              <div>
-                <dt className="text-xs uppercase tracking-wide text-white/50">Service</dt>
-                <dd className="mt-1 text-sm font-semibold">Local Team</dd>
-              </div>
-            </dl>
+            <Link
+              href="/business-printing"
+              className="shrink-0 rounded-xl bg-accent px-6 py-3.5 text-sm font-semibold text-foreground shadow-lg shadow-black/20 transition hover:scale-[1.03] hover:bg-accent-hover"
+            >
+              Business &amp; Bulk →
+            </Link>
+          </FadeIn>
+        </section>
+
+        {/* Pricing */}
+        <section id="pricing" className="px-4 py-16 sm:px-6 sm:py-20">
+          <div className="mx-auto max-w-6xl">
+            <FadeIn>
+              <SectionHeading
+                eyebrow="Starting Points"
+                title="Pricing"
+                description="Final pricing depends on size, quantity, and turnaround. Request a quote for an exact number."
+              />
+            </FadeIn>
+            <StaggerGrid className="mt-10 grid gap-6 sm:grid-cols-3" stagger={0.1}>
+              {pricingTiers.map((tier) => (
+                <StaggerItem key={tier.title}>
+                  <TiltCard depth={10} className="h-full rounded-2xl">
+                    <article
+                      className={`h-full rounded-2xl border p-6 ${
+                        tier.highlighted
+                          ? "border-brand bg-brand/5 shadow-lg shadow-brand/10"
+                          : "border-border bg-surface shadow-sm"
+                      }`}
+                    >
+                      <h3 className="text-lg font-semibold text-foreground">{tier.title}</h3>
+                      <p className="mt-2 text-3xl font-bold text-brand">{tier.from}</p>
+                      <p className="mt-2 text-sm text-muted">{tier.note}</p>
+                      <ul className="mt-4 space-y-2">
+                        {tier.features.map((feature) => (
+                          <li key={feature} className="flex items-center gap-2 text-sm text-muted">
+                            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-brand" />
+                            {feature}
+                          </li>
+                        ))}
+                      </ul>
+                    </article>
+                  </TiltCard>
+                </StaggerItem>
+              ))}
+            </StaggerGrid>
+            <FadeIn delay={0.15} className="mt-6 text-center text-sm text-muted">
+              Bulk and rush fees may apply. See{" "}
+              <Link href="/turnaround-time" className="font-medium text-brand hover:underline">
+                turnaround times
+              </Link>
+              .
+            </FadeIn>
           </div>
         </section>
 
-        {/* Services */}
-        <section id="services" className="px-4 py-16 sm:px-6 sm:py-20">
+        <SectionDivider variant="brand" />
+
+        {/* Gallery */}
+        <section id="gallery" className="border-y border-border bg-surface px-4 py-16 sm:px-6 sm:py-20">
           <div className="mx-auto max-w-6xl">
-            <SectionHeading
-              eyebrow="What We Do"
-              title="Services"
-              description="From single transfers to full bulk runs, we handle every detail so your order looks professional."
-            />
-            <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {services.map((service) => (
-                <article
-                  key={service.title}
-                  className="group rounded-2xl border border-border bg-surface p-6 shadow-sm transition hover:border-brand/30 hover:shadow-md"
-                >
-                  <div className="mb-4 inline-flex rounded-xl bg-brand/10 p-3 text-brand transition group-hover:bg-brand group-hover:text-white">
-                    {service.icon}
-                  </div>
-                  <h3 className="text-lg font-semibold text-foreground">{service.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted">{service.description}</p>
-                </article>
+            <FadeIn>
+              <SectionHeading
+                eyebrow="Our Work"
+                title="Gallery"
+                description="Sample categories from recent orders. Add your own photos when ready."
+                centered
+              />
+            </FadeIn>
+            <StaggerGrid className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3">
+              {galleryItems.map((item) => (
+                <StaggerItem key={item.label}>
+                  <TiltCard depth={18} className="rounded-2xl">
+                    <div
+                      className={`gallery-card group relative flex aspect-[4/3] flex-col justify-between overflow-hidden rounded-2xl bg-gradient-to-br p-5 shadow-lg ${item.tone}`}
+                    >
+                      {/* shimmer sweep */}
+                      <div
+                        aria-hidden
+                        className="shimmer pointer-events-none absolute inset-0 -translate-x-full skew-x-[-20deg] bg-white/15 transition-transform duration-700 group-hover:translate-x-full"
+                      />
+
+                      {/* depth layer bg circles */}
+                      <div
+                        aria-hidden
+                        className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-white/10 blur-xl"
+                        style={{ transform: "translateZ(10px)" }}
+                      />
+                      <div
+                        aria-hidden
+                        className="pointer-events-none absolute -bottom-4 -left-4 h-16 w-16 rounded-full bg-black/20 blur-lg"
+                      />
+
+                      {/* top row */}
+                      <div className="flex items-start justify-between" style={{ transform: "translateZ(20px)" }}>
+                        <span className="text-3xl leading-none drop-shadow-lg">{item.icon}</span>
+                        <span className="rounded-full border border-white/25 bg-black/20 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white/90 backdrop-blur-sm">
+                          {item.detail}
+                        </span>
+                      </div>
+
+                      {/* label */}
+                      <div style={{ transform: "translateZ(28px)" }}>
+                        <p className="text-base font-bold text-white drop-shadow-md">{item.label}</p>
+                        <p className="mt-0.5 text-xs text-white/70">Woodlands Print</p>
+                      </div>
+                    </div>
+                  </TiltCard>
+                </StaggerItem>
               ))}
-            </div>
+            </StaggerGrid>
+            <FadeIn delay={0.15} className="mt-6 text-center text-sm text-muted">
+              Replace gradient cards with real product photos — drop images in{" "}
+              <code className="rounded bg-border px-1.5 py-0.5 text-xs font-mono text-foreground">public/gallery/</code>
+            </FadeIn>
           </div>
         </section>
 
         {/* Why Choose Us */}
-        <section id="why-us" className="bg-brand px-4 py-16 text-white sm:px-6 sm:py-20">
-          <div className="mx-auto max-w-6xl">
-            <SectionHeading
-              eyebrow="Why Woodlands Print"
-              title="Why Choose Us"
-              description="We combine speed, quality, and personal service so you never have to compromise."
-              light
-            />
-            <div className="mt-10 grid gap-6 sm:grid-cols-3">
+        <section id="why-us" className="relative overflow-hidden bg-brand px-4 py-16 text-white sm:px-6 sm:py-20">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -right-20 top-0 h-64 w-64 rounded-full bg-accent/10 blur-3xl animate-blob-drift"
+          />
+          <div className="relative mx-auto max-w-6xl">
+            <FadeIn>
+              <SectionHeading
+                eyebrow="Why Woodlands Print"
+                title="Why Choose Us"
+                description="We combine speed, quality, and personal service so you never have to compromise."
+                light
+              />
+            </FadeIn>
+            <StaggerGrid className="mt-10 grid gap-6 sm:grid-cols-3">
               {benefits.map((benefit, index) => (
-                <div
-                  key={benefit.title}
-                  className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm"
-                >
-                  <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-accent text-sm font-bold text-foreground">
-                    {index + 1}
-                  </span>
-                  <h3 className="mt-4 text-lg font-semibold">{benefit.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-white/75">{benefit.description}</p>
-                </div>
+                <StaggerItem key={benefit.title}>
+                  <TiltCard depth={8} className="h-full rounded-2xl">
+                    <div className="h-full rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
+                      <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-accent text-sm font-bold text-foreground">
+                        {index + 1}
+                      </span>
+                      <h3 className="mt-4 text-lg font-semibold">{benefit.title}</h3>
+                      <p className="mt-2 text-sm leading-relaxed text-white/75">{benefit.description}</p>
+                    </div>
+                  </TiltCard>
+                </StaggerItem>
               ))}
-            </div>
+            </StaggerGrid>
           </div>
         </section>
 
-        {/* Quote Form */}
+        {/* Quote */}
         <section id="quote" className="px-4 py-16 sm:px-6 sm:py-20">
           <div className="mx-auto max-w-6xl">
             <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
-              <div>
+              <FadeIn>
                 <SectionHeading
                   eyebrow="Free Quote"
                   title="Get a Fast Quote"
@@ -212,6 +391,7 @@ export default function Home() {
                     "No obligation — just honest pricing",
                     "Upload your design for accurate quotes",
                     "Rush deadlines welcome",
+                    "Business & bulk orders welcome",
                   ].map((item) => (
                     <li key={item} className="flex items-start gap-3 text-sm text-muted">
                       <svg
@@ -227,125 +407,90 @@ export default function Home() {
                     </li>
                   ))}
                 </ul>
-              </div>
-              <QuoteForm />
+                <p className="mt-6 text-sm text-muted">
+                  Uploading artwork? Read our{" "}
+                  <Link href="/artwork-requirements" className="font-medium text-brand hover:underline">
+                    artwork requirements
+                  </Link>{" "}
+                  first.
+                </p>
+              </FadeIn>
+              <FadeIn direction="left" delay={0.1}>
+                <QuoteForm />
+              </FadeIn>
             </div>
+          </div>
+        </section>
+
+        <SectionDivider variant="light" />
+
+        {/* FAQ */}
+        <section id="faq" className="border-y border-border bg-surface px-4 py-16 sm:px-6 sm:py-20">
+          <div className="mx-auto max-w-3xl">
+            <FadeIn>
+              <SectionHeading
+                eyebrow="FAQ"
+                title="Common Questions"
+                description="Quick answers before you request a quote."
+                centered
+              />
+            </FadeIn>
+            <StaggerGrid className="mt-10 space-y-4">
+              {faqItems.map((item) => (
+                <StaggerItem key={item.q}>
+                  <div className="rounded-2xl border border-border bg-background p-6 shadow-sm transition hover:border-brand/20 hover:shadow-md">
+                    <dt className="font-semibold text-foreground">{item.q}</dt>
+                    <dd className="mt-2 text-sm leading-relaxed text-muted">{item.a}</dd>
+                  </div>
+                </StaggerItem>
+              ))}
+            </StaggerGrid>
           </div>
         </section>
 
         {/* Service Areas */}
-        <section id="areas" className="border-y border-border bg-surface px-4 py-16 sm:px-6 sm:py-20">
+        <section id="areas" className="px-4 py-16 sm:px-6 sm:py-20">
           <div className="mx-auto max-w-6xl text-center">
-            <SectionHeading
-              eyebrow="Coverage"
-              title="Service Areas"
-              description="Proudly serving customers throughout North Houston and nearby communities."
-              centered
-            />
-            <div className="mt-10 flex flex-wrap justify-center gap-3">
-              {serviceAreas.map((area) => (
-                <span
-                  key={area}
-                  className="rounded-full border border-border bg-background px-4 py-2 text-sm font-medium text-foreground"
-                >
-                  {area}
-                </span>
-              ))}
-            </div>
-            <p className="mx-auto mt-8 max-w-2xl text-sm leading-relaxed text-muted">
+            <FadeIn>
+              <SectionHeading
+                eyebrow="Coverage"
+                title="Service Areas"
+                description="Proudly serving customers throughout North Houston and nearby communities."
+                centered
+              />
+            </FadeIn>
+            <FadeIn delay={0.1}>
+              <div className="mt-10 flex flex-wrap justify-center gap-3">
+                {serviceAreas.map((area) =>
+                  area.href ? (
+                    <Link
+                      key={area.label}
+                      href={area.href}
+                      className="rounded-full border border-border bg-surface px-4 py-2 text-sm font-medium text-foreground shadow-sm transition hover:-translate-y-0.5 hover:border-brand hover:text-brand hover:shadow-md"
+                    >
+                      {area.label}
+                    </Link>
+                  ) : (
+                    <span
+                      key={area.label}
+                      className="rounded-full border border-border bg-background px-4 py-2 text-sm font-medium text-foreground"
+                    >
+                      {area.label}
+                    </span>
+                  ),
+                )}
+              </div>
+            </FadeIn>
+            <FadeIn delay={0.18} className="mx-auto mt-8 max-w-2xl text-sm leading-relaxed text-muted">
               Based in The Woodlands area, we serve Spring, Conroe, Tomball, Magnolia, Richmond, and
               surrounding communities with pickup, delivery, and shipping options available.
-            </p>
+            </FadeIn>
           </div>
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="bg-brand-dark px-4 py-12 text-white sm:px-6">
-        <div className="mx-auto max-w-6xl">
-          <div className="flex flex-col gap-8 sm:flex-row sm:items-start sm:justify-between">
-            <div>
-              <p className="text-xl font-bold">Woodlands Print</p>
-              <p className="mt-2 max-w-xs text-sm text-white/60">
-                DTF transfers, custom shirts, and bulk apparel with fast turnaround and local support.
-              </p>
-            </div>
-            <div className="flex flex-col gap-6 sm:flex-row sm:gap-12">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-wider text-white/40">Quick Links</p>
-                <nav className="mt-3 flex flex-col gap-2 text-sm">
-                  <a href="#services" className="text-white/70 transition hover:text-white">
-                    Services
-                  </a>
-                  <a href="#why-us" className="text-white/70 transition hover:text-white">
-                    Why Choose Us
-                  </a>
-                  <a href="#quote" className="text-white/70 transition hover:text-white">
-                    Get a Quote
-                  </a>
-                  <a href="#areas" className="text-white/70 transition hover:text-white">
-                    Service Areas
-                  </a>
-                </nav>
-              </div>
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-wider text-white/40">Services</p>
-                <ul className="mt-3 space-y-2 text-sm text-white/70">
-                  <li>DTF Gang Sheets</li>
-                  <li>Custom T-Shirts</li>
-                  <li>Business Apparel</li>
-                  <li>Event &amp; Bulk Orders</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-          <div className="mt-10 border-t border-white/10 pt-6 text-center text-xs text-white/40 sm:text-left">
-            &copy; {new Date().getFullYear()} Woodlands Print. All rights reserved.
-          </div>
-        </div>
-      </footer>
-
+      <SiteFooter />
       <StickyCta />
     </>
-  );
-}
-
-function SectionHeading({
-  eyebrow,
-  title,
-  description,
-  light = false,
-  centered = false,
-}: {
-  eyebrow: string;
-  title: string;
-  description: string;
-  light?: boolean;
-  centered?: boolean;
-}) {
-  return (
-    <div className={centered ? "mx-auto max-w-2xl" : "max-w-2xl"}>
-      <p
-        className={`text-xs font-semibold uppercase tracking-wider ${
-          light ? "text-accent" : "text-brand"
-        } ${centered ? "text-center" : ""}`}
-      >
-        {eyebrow}
-      </p>
-      <h2
-        className={`mt-2 text-3xl font-bold tracking-tight sm:text-4xl ${
-          light ? "text-white" : "text-foreground"
-        } ${centered ? "text-center" : ""}`}
-      >
-        {title}
-      </h2>
-      <p
-        className={`mt-3 text-base leading-relaxed ${
-          light ? "text-white/70" : "text-muted"
-        } ${centered ? "text-center" : ""}`}
-      >
-        {description}
-      </p>
-    </div>
   );
 }

@@ -13,6 +13,20 @@
   --border: #e2e8e4;
 }
 
+/* Dark mode */
+[data-theme="dark"] {
+  --background: #0d1a15;
+  --foreground: #e8f0eb;
+  --brand: #3a8f6a;
+  --brand-dark: #0f261c;
+  --brand-light: #4db382;
+  --accent: #d4a832;
+  --accent-hover: #c09628;
+  --muted: #8aaa94;
+  --surface: #152019;
+  --border: #253d2e;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -36,4 +50,145 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+/* ── 3D & motion ── */
+.scene-3d {
+  perspective: 1400px;
+}
+
+.scene-stage {
+  transform-style: preserve-3d;
+  width: 100%;
+  height: 100%;
+}
+
+.tilt-card {
+  position: relative;
+  transform-style: preserve-3d;
+  perspective: 900px;
+}
+
+.tilt-card-inner {
+  height: 100%;
+  transform-style: preserve-3d;
+}
+
+@keyframes blob-drift {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(12px, -18px) scale(1.05);
+  }
+  66% {
+    transform: translate(-8px, 10px) scale(0.98);
+  }
+}
+
+@keyframes blob-drift-reverse {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(-14px, 12px) scale(1.08);
+  }
+}
+
+@keyframes mesh-shift {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.08) rotate(3deg);
+  }
+}
+
+.animate-blob-drift {
+  animation: blob-drift 9s ease-in-out infinite;
+}
+
+.animate-blob-drift-reverse {
+  animation: blob-drift-reverse 11s ease-in-out infinite;
+}
+
+.animate-mesh-shift {
+  animation: mesh-shift 14s ease-in-out infinite;
+}
+
+.section-soft-top {
+  background: linear-gradient(180deg, var(--background) 0%, transparent 100%);
+}
+
+/* Gallery shimmer */
+.gallery-card .shimmer {
+  transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Dark mode smooth transitions on bg/border/text */
+body,
+header,
+footer,
+section,
+article,
+aside,
+nav {
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.2s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .animate-blob-drift,
+  .animate-blob-drift-reverse,
+  .animate-mesh-shift {
+    animation: none;
+  }
+}
+
+.legal-prose h2 {
+  margin-top: 2rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.legal-prose h2:first-child {
+  margin-top: 0;
+}
+
+.legal-prose p,
+.legal-prose li {
+  margin-top: 0.75rem;
+  line-height: 1.7;
+  color: var(--muted);
+}
+
+.legal-prose ul {
+  margin-top: 0.75rem;
+  list-style: disc;
+  padding-left: 1.25rem;
+}
+
+.legal-prose a {
+  color: var(--brand);
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.legal-prose strong {
+  color: var(--foreground);
+  font-weight: 600;
 }
