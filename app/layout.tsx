@@ -1,11 +1,18 @@
 import type { Metadata, Viewport } from "next";
-import { Geist } from "next/font/google";
+import { Fraunces, Geist } from "next/font/google";
+import { GrainOverlay } from "./components/grain-overlay";
 import { ThemeProvider } from "./components/theme-provider";
 import "./globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+});
+
+const fraunces = Fraunces({
+  variable: "--font-display",
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -49,9 +56,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} h-full scroll-smooth antialiased`}>
+    <html lang="en" className={`${geistSans.variable} ${fraunces.variable} h-full scroll-smooth antialiased`}>
       <body className="min-h-full bg-background text-foreground">
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <GrainOverlay />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

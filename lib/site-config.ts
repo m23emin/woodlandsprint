@@ -2,11 +2,74 @@ export const siteName = "Woodlands Print";
 
 export const navLinks = [
   { label: "Services", href: "/#services" },
-  { label: "Pricing", href: "/#pricing" },
+  { label: "Process", href: "/#process" },
   { label: "Gallery", href: "/#gallery" },
   { label: "Business", href: "/business-printing" },
   { label: "Quote", href: "/#quote" },
 ] as const;
+
+export const howItWorksSteps = [
+  {
+    title: "Upload & Quote",
+    description: "Send your artwork and project details. We respond quickly with pricing and timeline options.",
+  },
+  {
+    title: "Review & Approve",
+    description: "We check file quality and sizing. You approve before anything goes to print.",
+  },
+  {
+    title: "Print & QC",
+    description: "Your order is printed with premium materials and checked before it leaves our shop.",
+  },
+  {
+    title: "Pickup or Ship",
+    description: "Local pickup in North Houston or shipping to your door — ready when you need it.",
+  },
+] as const;
+
+export const testimonials = [
+  {
+    name: "Marcus T.",
+    role: "Gym Owner — Spring, TX",
+    rating: 5,
+    quote:
+      "Ordered 40 team shirts with a tight deadline. Colors were spot-on and they had everything ready for pickup on time.",
+  },
+  {
+    name: "Sarah L.",
+    role: "Event Coordinator — The Woodlands",
+    rating: 5,
+    quote:
+      "Great communication from quote to delivery. The DTF transfers looked vibrant and held up great after multiple washes.",
+  },
+  {
+    name: "David R.",
+    role: "Small Business — Conroe",
+    rating: 5,
+    quote:
+      "We use them for polos and bulk runs. Fair pricing, consistent quality, and reordering is easy every season.",
+  },
+] as const;
+
+export const trustCategories = [
+  "Gyms & Fitness",
+  "Barber Shops",
+  "Restaurants",
+  "Churches",
+  "Schools & Teams",
+  "Landscaping",
+  "Construction",
+  "Event Planners",
+] as const;
+
+export type GalleryItem = {
+  label: string;
+  detail: string;
+  tone: string;
+  icon?: string;
+  image?: string;
+  layout: "hero" | "tall" | "wide" | "default";
+};
 
 export const footerLinks = {
   company: [
@@ -57,48 +120,54 @@ export const pricingTiers = [
   },
 ];
 
-export const galleryItems = [
+export const galleryItems: GalleryItem[] = [
   {
     label: "DTF Gang Sheet",
     tone: "from-brand/80 to-brand-light",
     icon: "⬛",
     detail: "Full-color transfer",
-    size: "large",
+    layout: "hero",
+    image: "/gallery/gang-sheet.jpg",
   },
   {
     label: "Business Polo",
     tone: "from-brand-dark to-brand",
     icon: "👔",
-    detail: "Logo embroidery & print",
-    size: "small",
+    detail: "Logo & print",
+    layout: "default",
+    image: "/gallery/business-polo.jpg",
   },
   {
     label: "Event Tees",
     tone: "from-amber-600/70 to-brand-light",
     icon: "🎉",
     detail: "Bulk event runs",
-    size: "small",
+    layout: "default",
+    image: "/gallery/event-tees.jpg",
   },
   {
     label: "Team Hoodies",
     tone: "from-brand-light to-brand-dark",
     icon: "🏆",
     detail: "School & sports",
-    size: "large",
+    layout: "tall",
+    image: "/gallery/team-hoodies.jpg",
   },
   {
     label: "Vibrant Transfer",
     tone: "from-brand to-amber-500/60",
     icon: "🎨",
-    detail: "300 DPI full coverage",
-    size: "small",
+    detail: "300 DPI coverage",
+    layout: "default",
+    image: "/gallery/vibrant-transfer.jpg",
   },
   {
     label: "Bulk Ready",
     tone: "from-brand-dark to-brand-light",
     icon: "📦",
     detail: "25–500+ pieces",
-    size: "small",
+    layout: "wide",
+    image: "/gallery/bulk-ready.jpg",
   },
 ];
 

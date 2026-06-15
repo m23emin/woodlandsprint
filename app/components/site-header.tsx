@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Logo } from "./logo";
+import { MobileNav } from "./mobile-nav";
 import { ThemeToggle } from "./theme-toggle";
 import { navLinks } from "@/lib/site-config";
 
@@ -35,10 +36,11 @@ export function SiteHeader({ variant = "dark" }: { variant?: "dark" | "light" })
           <ThemeToggle variant={isDark ? "dark" : "light"} />
           <Link
             href="/#quote"
-            className="rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-foreground transition hover:bg-accent-hover"
+            className="hidden rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-foreground transition hover:bg-accent-hover sm:inline-flex"
           >
             Get a Quote
           </Link>
+          <MobileNav variant={isDark ? "dark" : "light"} />
         </div>
       </div>
     </header>

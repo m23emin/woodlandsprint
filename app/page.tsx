@@ -1,10 +1,14 @@
 import Link from "next/link";
+import { BeforeAfterSlider } from "./components/before-after-slider";
+import { BentoGallery } from "./components/bento-gallery";
+import { HowItWorks } from "./components/how-it-works";
 import { QuoteForm } from "./components/quote-form";
 import { Logo } from "./components/logo";
 import { SectionHeading } from "./components/section-heading";
 import { SiteFooter } from "./components/site-footer";
 import { SiteHeader } from "./components/site-header";
 import { StickyCta } from "./components/sticky-cta";
+import { Testimonials } from "./components/testimonials";
 import { FadeIn, StaggerGrid, StaggerItem } from "./components/motion/fade-in";
 import { HeroScene } from "./components/motion/hero-scene";
 import { ParallaxBlob, ParallaxLayer } from "./components/motion/parallax";
@@ -123,7 +127,7 @@ export default function Home() {
                 Woodlands Print — DTF Transfers &amp; Custom Shirts in The Woodlands, TX
               </h1>
               <FadeIn delay={0.2}>
-                <p className="mt-4 max-w-xl text-lg text-white/80 sm:text-xl">
+                <p className="font-display mt-4 max-w-xl text-2xl text-white/90 sm:text-3xl">
                   DTF Transfers &amp; Custom Shirts
                 </p>
               </FadeIn>
@@ -195,7 +199,7 @@ export default function Home() {
                       <div className="mb-4 inline-flex rounded-xl bg-brand/10 p-3 text-brand transition group-hover:bg-brand group-hover:text-white">
                         {service.icon}
                       </div>
-                      <h3 className="text-lg font-semibold text-foreground">{service.title}</h3>
+                      <h3 className="font-display text-lg font-semibold text-foreground">{service.title}</h3>
                       <p className="mt-2 text-sm leading-relaxed text-muted">{service.description}</p>
                     </article>
                   </TiltCard>
@@ -204,6 +208,8 @@ export default function Home() {
             </StaggerGrid>
           </div>
         </section>
+
+        <HowItWorks />
 
         <SectionDivider variant="light" />
 
@@ -283,6 +289,24 @@ export default function Home() {
 
         <SectionDivider variant="brand" />
 
+        {/* Before / After */}
+        <section className="px-4 py-16 sm:px-6 sm:py-20">
+          <div className="mx-auto max-w-6xl">
+            <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+              <FadeIn>
+                <SectionHeading
+                  eyebrow="See the Difference"
+                  title="From Transfer to Finished Shirt"
+                  description="Drag the slider to compare DTF film quality against the final pressed result — vibrant color that holds up wash after wash."
+                />
+              </FadeIn>
+              <FadeIn direction="left" delay={0.1}>
+                <BeforeAfterSlider />
+              </FadeIn>
+            </div>
+          </div>
+        </section>
+
         {/* Gallery */}
         <section id="gallery" className="border-y border-border bg-surface px-4 py-16 sm:px-6 sm:py-20">
           <div className="mx-auto max-w-6xl">
@@ -290,55 +314,12 @@ export default function Home() {
               <SectionHeading
                 eyebrow="Our Work"
                 title="Gallery"
-                description="Sample categories from recent orders. Add your own photos when ready."
+                description="Recent categories from gang sheets and business apparel to bulk event runs across North Houston."
                 centered
               />
             </FadeIn>
-            <StaggerGrid className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3">
-              {galleryItems.map((item) => (
-                <StaggerItem key={item.label}>
-                  <TiltCard depth={18} className="rounded-2xl">
-                    <div
-                      className={`gallery-card group relative flex aspect-[4/3] flex-col justify-between overflow-hidden rounded-2xl bg-gradient-to-br p-5 shadow-lg ${item.tone}`}
-                    >
-                      {/* shimmer sweep */}
-                      <div
-                        aria-hidden
-                        className="shimmer pointer-events-none absolute inset-0 -translate-x-full skew-x-[-20deg] bg-white/15 transition-transform duration-700 group-hover:translate-x-full"
-                      />
-
-                      {/* depth layer bg circles */}
-                      <div
-                        aria-hidden
-                        className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-white/10 blur-xl"
-                        style={{ transform: "translateZ(10px)" }}
-                      />
-                      <div
-                        aria-hidden
-                        className="pointer-events-none absolute -bottom-4 -left-4 h-16 w-16 rounded-full bg-black/20 blur-lg"
-                      />
-
-                      {/* top row */}
-                      <div className="flex items-start justify-between" style={{ transform: "translateZ(20px)" }}>
-                        <span className="text-3xl leading-none drop-shadow-lg">{item.icon}</span>
-                        <span className="rounded-full border border-white/25 bg-black/20 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white/90 backdrop-blur-sm">
-                          {item.detail}
-                        </span>
-                      </div>
-
-                      {/* label */}
-                      <div style={{ transform: "translateZ(28px)" }}>
-                        <p className="text-base font-bold text-white drop-shadow-md">{item.label}</p>
-                        <p className="mt-0.5 text-xs text-white/70">Woodlands Print</p>
-                      </div>
-                    </div>
-                  </TiltCard>
-                </StaggerItem>
-              ))}
-            </StaggerGrid>
-            <FadeIn delay={0.15} className="mt-6 text-center text-sm text-muted">
-              Replace gradient cards with real product photos — drop images in{" "}
-              <code className="rounded bg-border px-1.5 py-0.5 text-xs font-mono text-foreground">public/gallery/</code>
+            <FadeIn delay={0.1} className="mt-10">
+              <BentoGallery items={galleryItems} />
             </FadeIn>
           </div>
         </section>
@@ -366,7 +347,7 @@ export default function Home() {
                       <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-accent text-sm font-bold text-foreground">
                         {index + 1}
                       </span>
-                      <h3 className="mt-4 text-lg font-semibold">{benefit.title}</h3>
+                      <h3 className="font-display mt-4 text-lg font-semibold">{benefit.title}</h3>
                       <p className="mt-2 text-sm leading-relaxed text-white/75">{benefit.description}</p>
                     </div>
                   </TiltCard>
@@ -375,6 +356,8 @@ export default function Home() {
             </StaggerGrid>
           </div>
         </section>
+
+        <Testimonials />
 
         {/* Quote */}
         <section id="quote" className="px-4 py-16 sm:px-6 sm:py-20">

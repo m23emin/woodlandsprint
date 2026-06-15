@@ -40,6 +40,7 @@
   --color-border: var(--border);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-display);
 }
 
 html {
@@ -51,6 +52,23 @@ body {
   color: var(--foreground);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   overflow-x: hidden;
+}
+
+.font-display {
+  font-family: var(--font-display), Georgia, "Times New Roman", serif;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 28s linear infinite;
 }
 
 /* ── 3D & motion ── */
@@ -153,6 +171,10 @@ nav {
   .animate-blob-drift,
   .animate-blob-drift-reverse,
   .animate-mesh-shift {
+    animation: none;
+  }
+
+  .animate-marquee {
     animation: none;
   }
 }
