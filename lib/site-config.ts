@@ -1,11 +1,11 @@
 export const siteName = "Woodlands Print";
 
 export const navLinks = [
-  { label: "Services", href: "/#services" },
-  { label: "Pricing", href: "/#pricing" },
-  { label: "Process", href: "/#process" },
-  { label: "Gallery", href: "/#gallery" },
+  { label: "DTF Transfers", href: "/dtf-transfers" },
+  { label: "Custom Shirts", href: "/custom-shirts" },
+  { label: "Events & Bulk", href: "/event-bulk" },
   { label: "Business", href: "/business-printing" },
+  { label: "Pricing", href: "/#pricing" },
   { label: "Quote", href: "/#quote" },
 ] as const;
 
@@ -74,10 +74,11 @@ export type GalleryItem = {
 
 export const footerLinks = {
   company: [
-    { label: "Services", href: "/#services" },
-    { label: "Pricing", href: "/#pricing" },
-    { label: "Get a Quote", href: "/#quote" },
+    { label: "DTF Transfers", href: "/dtf-transfers" },
+    { label: "Custom Shirts", href: "/custom-shirts" },
+    { label: "Events & Bulk", href: "/event-bulk" },
     { label: "Business & Bulk", href: "/business-printing" },
+    { label: "Get a Quote", href: "/#quote" },
   ],
   resources: [
     { label: "Artwork Requirements", href: "/artwork-requirements" },

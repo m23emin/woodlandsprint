@@ -3,6 +3,9 @@ import { localSeoPages } from "@/lib/local-seo-data";
 
 const staticPages = [
   "",
+  "/dtf-transfers",
+  "/custom-shirts",
+  "/event-bulk",
   "/business-printing",
   "/artwork-requirements",
   "/dtf-pressing-instructions",
