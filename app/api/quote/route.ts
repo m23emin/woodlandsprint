@@ -1,5 +1,6 @@
 import { Resend } from "resend";
 import { NextResponse } from "next/server";
+import { saveQuoteRequest } from "@/lib/quotes";
 
 function getString(value: FormDataEntryValue | null): string {
   return typeof value === "string" ? value.trim() : "";
@@ -32,17 +33,30 @@ export async function POST(request: Request) {
     );
   }
 
-  const design = formData.get("design");
-  const attachments =
-    design instanceof File && design.size > 0
-      ? [
-          {
-            filename: design.name,
-            content: Buffer.from(await design.arrayBuffer()),
-            contentType: design.type || undefined,
-          },
-        ]
-      : undefined;
+  const designEntry = formData.get("design");
+  const design = designEntry instanceof File && designEntry.size > 0 ? designEntry : null;
+
+  const dbResult = await saveQuoteRequest({
+    name,
+    phone,
+    email,
+    businessName,
+    service,
+    quantity,
+    needBy,
+    notes,
+    design,
+  });
+
+  const attachments = design
+    ? [
+        {
+          filename: design.name,
+          content: Buffer.from(await design.arrayBuffer()),
+          contentType: design.type || undefined,
+        },
+      ]
+    : undefined;
 
   const rows = [
     ["Name", name],
@@ -53,6 +67,7 @@ export async function POST(request: Request) {
     ["Quantity", quantity || "Not specified"],
     ["Need By", needBy || "Not specified"],
     ["Notes", notes || "None"],
+    ...(dbResult.saved ? [["Admin ID", dbResult.id] as const] : []),
   ];
 
   const html = `
@@ -65,6 +80,7 @@ export async function POST(request: Request) {
         )
         .join("")}
     </table>
+    ${dbResult.saved ? `<p><a href="${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/admin/quotes/${dbResult.id}">View in admin panel</a></p>` : ""}
   `.trim();
 
   const text = rows.map(([label, value]) => `${label}: ${value}`).join("\n");
@@ -85,7 +101,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Failed to send quote request." }, { status: 502 });
   }
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, quoteId: dbResult.saved ? dbResult.id : null });
 }
 
 function escapeHtml(value: string): string {

@@ -2,6 +2,7 @@ export const siteName = "Woodlands Print";
 
 export const navLinks = [
   { label: "Services", href: "/#services" },
+  { label: "Pricing", href: "/#pricing" },
   { label: "Process", href: "/#process" },
   { label: "Gallery", href: "/#gallery" },
   { label: "Business", href: "/business-printing" },

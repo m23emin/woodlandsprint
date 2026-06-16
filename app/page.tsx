@@ -2,6 +2,7 @@ import Link from "next/link";
 import { BeforeAfterSlider } from "./components/before-after-slider";
 import { BentoGallery } from "./components/bento-gallery";
 import { HowItWorks } from "./components/how-it-works";
+import { PriceCalculator } from "./components/price-calculator";
 import { QuoteForm } from "./components/quote-form";
 import { Logo } from "./components/logo";
 import { SectionHeading } from "./components/section-heading";
@@ -277,6 +278,9 @@ export default function Home() {
                 </StaggerItem>
               ))}
             </StaggerGrid>
+            <FadeIn delay={0.12}>
+              <PriceCalculator />
+            </FadeIn>
             <FadeIn delay={0.15} className="mt-6 text-center text-sm text-muted">
               Bulk and rush fees may apply. See{" "}
               <Link href="/turnaround-time" className="font-medium text-brand hover:underline">

@@ -1,7 +1,8 @@
 "use client";
 
-import Link from "next/link";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
+import { clearQuotePrefill, loadQuotePrefill } from "@/lib/quote-prefill";
+import { DesignUpload } from "./design-upload";
 
 const serviceOptions = [
   "DTF Gang Sheets",
@@ -15,6 +16,24 @@ type FormStatus = "idle" | "submitting" | "success" | "error";
 
 export function QuoteForm() {
   const [status, setStatus] = useState<FormStatus>("idle");
+  const [service, setService] = useState("");
+  const [quantity, setQuantity] = useState("");
+  const [notes, setNotes] = useState("");
+
+  useEffect(() => {
+    const prefill = loadQuotePrefill();
+    if (!prefill) return;
+
+    if (typeof prefill.service === "string") setService(prefill.service);
+    if (prefill.quantity != null) setQuantity(String(prefill.quantity));
+    if (prefill.estimatedTotal && Number(prefill.estimatedTotal) > 0) {
+      setNotes((prev) => {
+        const line = `Calculator estimate: ~$${prefill.estimatedTotal}${prefill.rush ? " (rush requested)" : ""}`;
+        return prev ? `${prev}\n${line}` : line;
+      });
+    }
+    clearQuotePrefill();
+  }, []);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -41,6 +60,9 @@ export function QuoteForm() {
 
       setStatus("success");
       form.reset();
+      setService("");
+      setQuantity("");
+      setNotes("");
     } catch {
       setStatus("error");
     }
@@ -119,7 +141,13 @@ export function QuoteForm() {
 
           <div className="grid gap-5 sm:grid-cols-2">
             <Field label="Service Type" htmlFor="service">
-              <select id="service" name="service" className={inputClass} defaultValue="">
+              <select
+                id="service"
+                name="service"
+                className={inputClass}
+                value={service}
+                onChange={(e) => setService(e.target.value)}
+              >
                 <option value="" disabled>
                   Select a service
                 </option>
@@ -137,6 +165,8 @@ export function QuoteForm() {
                 type="text"
                 className={inputClass}
                 placeholder="e.g. 24 shirts"
+                value={quantity}
+                onChange={(e) => setQuantity(e.target.value)}
               />
             </Field>
           </div>
@@ -146,29 +176,7 @@ export function QuoteForm() {
           </Field>
 
           <Field label="Upload Design" htmlFor="design">
-            <input
-              id="design"
-              name="design"
-              type="file"
-              accept="image/*,.pdf,.ai,.eps,.svg"
-              className="block w-full text-sm text-muted file:mr-4 file:rounded-lg file:border-0 file:bg-brand/10 file:px-4 file:py-2.5 file:text-sm file:font-semibold file:text-brand hover:file:bg-brand/15"
-            />
-            <p className="mt-1.5 text-xs text-muted">PNG, JPG, PDF, AI, EPS, or SVG accepted.</p>
-            <div className="mt-3 rounded-xl border border-border bg-background px-4 py-3">
-              <p className="text-xs font-semibold uppercase tracking-wide text-foreground">
-                Before uploading
-              </p>
-              <ul className="mt-2 space-y-1 text-xs text-muted">
-                <li>Transparent background?</li>
-                <li>Correct print size?</li>
-                <li>High resolution (300 DPI)?</li>
-                <li>Not mirrored?</li>
-                <li>No unwanted white box?</li>
-              </ul>
-              <Link href="/artwork-requirements" className="mt-2 inline-block text-xs font-medium text-brand hover:underline">
-                Full artwork guide →
-              </Link>
-            </div>
+            <DesignUpload />
           </Field>
 
           <Field label="Notes" htmlFor="notes">
@@ -178,11 +186,13 @@ export function QuoteForm() {
               rows={4}
               className={`${inputClass} resize-y min-h-28`}
               placeholder="Tell us about colors, sizes, placement, or any special requests."
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
             />
           </Field>
 
           {status === "error" && (
-            <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
+            <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700 dark:bg-red-950/40 dark:text-red-300">
               Something went wrong sending your request. Please check your details and try again, or call us directly.
             </p>
           )}
@@ -212,13 +222,13 @@ function Field({
   children: React.ReactNode;
 }) {
   return (
-    <label className="block">
+    <div className="block">
       <span className="mb-1.5 block text-sm font-medium text-foreground">
         {label}
         {required && <span className="text-brand"> *</span>}
       </span>
       {children}
-    </label>
+    </div>
   );
 }
 
