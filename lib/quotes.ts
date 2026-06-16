@@ -37,7 +37,7 @@ export async function saveQuoteRequest(input: SaveQuoteInput) {
     .single();
 
   if (error || !quote) {
-    console.error("Supabase insert quote error:", error);
+    logSupabaseError("insert quote", error);
     return { saved: false as const, reason: "insert_failed" as const };
   }
 
@@ -53,7 +53,7 @@ export async function saveQuoteRequest(input: SaveQuoteInput) {
       });
 
     if (uploadError) {
-      console.error("Supabase upload design error:", uploadError);
+      logSupabaseError("upload design", uploadError);
     } else {
       await supabase
         .from("quotes")
@@ -75,7 +75,7 @@ export async function listQuotes(): Promise<QuoteRecord[] | null> {
     .order("created_at", { ascending: false });
 
   if (error) {
-    console.error("Supabase list quotes error:", error);
+    logSupabaseError("list quotes", error);
     return null;
   }
 
@@ -100,7 +100,7 @@ export async function updateQuote(
 
   const { error } = await supabase.from("quotes").update(patch).eq("id", id);
   if (error) {
-    console.error("Supabase update quote error:", error);
+    logSupabaseError("update quote", error);
     return { ok: false as const };
   }
 
@@ -118,4 +118,17 @@ export async function getDesignSignedUrl(path: string, expiresIn = 3600) {
 
 function sanitizeFilename(name: string) {
   return name.replace(/[^a-zA-Z0-9._-]/g, "_");
+}
+
+function logSupabaseError(action: string, error: unknown) {
+  if (error && typeof error === "object") {
+    const record = error as { message?: string; code?: string; hint?: string };
+    console.error(`Supabase ${action} error:`, {
+      message: record.message?.slice(0, 200),
+      code: record.code,
+      hint: record.hint,
+    });
+    return;
+  }
+  console.error(`Supabase ${action} error:`, error);
 }

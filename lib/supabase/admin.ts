@@ -8,8 +8,10 @@ export function getSupabaseAdmin() {
 
   if (!url || !key) return null;
 
+  const normalizedUrl = url.replace(/\/+$/, "");
+
   if (!adminClient) {
-    adminClient = createClient(url, key, {
+    adminClient = createClient(normalizedUrl, key, {
       auth: { persistSession: false, autoRefreshToken: false },
     });
   }
