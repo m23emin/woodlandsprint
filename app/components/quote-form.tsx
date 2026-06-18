@@ -26,11 +26,16 @@ export function QuoteForm() {
 
     if (typeof prefill.service === "string") setService(prefill.service);
     if (prefill.quantity != null) setQuantity(String(prefill.quantity));
+
+    const noteLines: string[] = [];
+    if (typeof prefill.blank === "string" && prefill.blank) {
+      noteLines.push(`Blank: ${prefill.blank}`);
+    }
     if (prefill.estimatedTotal && Number(prefill.estimatedTotal) > 0) {
-      setNotes((prev) => {
-        const line = `Calculator estimate: ~$${prefill.estimatedTotal}${prefill.rush ? " (rush requested)" : ""}`;
-        return prev ? `${prev}\n${line}` : line;
-      });
+      noteLines.push(`Calculator estimate: ~$${prefill.estimatedTotal}${prefill.rush ? " (rush requested)" : ""}`);
+    }
+    if (noteLines.length > 0) {
+      setNotes((prev) => (prev ? `${prev}\n${noteLines.join("\n")}` : noteLines.join("\n")));
     }
     clearQuotePrefill();
   }, []);
