@@ -1,8 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useLanguage } from "@/app/components/language-provider";
 
 export function StickyCta() {
+  const { dict } = useLanguage();
+
+  return <StickyCtaInner label={dict.sticky.cta} />;
+}
+
+function StickyCtaInner({ label }: { label: string }) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -28,7 +35,7 @@ export function StickyCta() {
         href="#quote"
         className="flex w-full items-center justify-center rounded-xl bg-accent px-6 py-3.5 text-base font-semibold text-foreground shadow-sm transition hover:bg-accent-hover"
       >
-        Get a Fast Quote
+        {label}
       </a>
     </div>
   );

@@ -1,6 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import { Logo } from "./logo";
-import { footerLinks, siteName } from "@/lib/site-config";
+import { useLanguage } from "@/app/components/language-provider";
+import { getFooterLinks } from "@/lib/i18n";
+import { siteName } from "@/lib/site-config";
 
 function FooterColumn({ title, links }: { title: string; links: { label: string; href: string }[] }) {
   return (
@@ -18,23 +22,24 @@ function FooterColumn({ title, links }: { title: string; links: { label: string;
 }
 
 export function SiteFooter() {
+  const { locale, dict } = useLanguage();
+  const footerLinks = getFooterLinks(locale);
+
   return (
     <footer className="bg-brand-dark px-4 py-12 text-white sm:px-6">
       <div className="mx-auto max-w-6xl">
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-5">
           <div className="sm:col-span-2 lg:col-span-1">
             <Logo variant="full" onDark href="/" />
-            <p className="mt-3 max-w-xs text-sm text-white/60">
-              DTF transfers, custom shirts, and bulk apparel with fast turnaround and local support.
-            </p>
+            <p className="mt-3 max-w-xs text-sm text-white/60">{dict.footer.tagline}</p>
           </div>
-          <FooterColumn title="Company" links={[...footerLinks.company]} />
-          <FooterColumn title="Resources" links={[...footerLinks.resources]} />
-          <FooterColumn title="Policies" links={[...footerLinks.policies]} />
-          <FooterColumn title="Service Areas" links={[...footerLinks.local]} />
+          <FooterColumn title={dict.footer.company} links={footerLinks.company} />
+          <FooterColumn title={dict.footer.resources} links={footerLinks.resources} />
+          <FooterColumn title={dict.footer.policies} links={footerLinks.policies} />
+          <FooterColumn title={dict.footer.areas} links={footerLinks.local} />
         </div>
         <div className="mt-10 border-t border-white/10 pt-6 text-center text-xs text-white/40 sm:text-left">
-          &copy; {new Date().getFullYear()} {siteName}. All rights reserved.
+          &copy; {new Date().getFullYear()} {siteName}. {dict.footer.rights}
         </div>
       </div>
     </footer>

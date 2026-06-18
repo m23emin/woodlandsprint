@@ -1,11 +1,13 @@
 import { NextResponse } from "next/server";
 import { runChatAssistant, type ChatTurn } from "@/lib/chat-assistant";
 import { sendChatEscalationEmail } from "@/lib/chat-email";
+import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
 import { getClientIp, rateLimit } from "@/lib/rate-limit";
 
 type ChatRequest = {
   messages?: ChatTurn[];
   email?: string;
+  locale?: string;
 };
 
 function isValidMessages(messages: unknown): messages is ChatTurn[] {
@@ -40,7 +42,9 @@ export async function POST(request: Request) {
   }
 
   const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
-  const result = runChatAssistant(body.messages);
+  const locale: Locale = isLocale(body.locale) ? body.locale : "en";
+  const dict = getDictionary(locale);
+  const result = runChatAssistant(body.messages, locale);
 
   if (result.escalate && email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     const mail = await sendChatEscalationEmail({
@@ -51,8 +55,7 @@ export async function POST(request: Request) {
 
     if (mail.sent) {
       return NextResponse.json({
-        reply:
-          "Thanks! Our team has your message and will email you back shortly — usually within one business day. For urgent help, call or use WhatsApp.",
+        reply: dict.chat.thanksEscalated,
         escalate: true,
         needsEmail: false,
         escalated: true,
@@ -60,7 +63,7 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({
-      reply: "We couldn't send that email right now. Please call us or use the quote form on the homepage.",
+      reply: dict.chat.emailSendFail,
       escalate: true,
       needsEmail: false,
       escalated: false,

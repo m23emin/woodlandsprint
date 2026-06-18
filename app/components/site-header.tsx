@@ -1,20 +1,24 @@
+"use client";
+
 import Link from "next/link";
 import { Logo } from "./logo";
 import { AccountLink } from "./account/account-link";
 import { CartButton } from "./cart/cart-button";
+import { LanguageSwitcher } from "./language-switcher";
 import { MobileNav } from "./mobile-nav";
 import { ThemeToggle } from "./theme-toggle";
-import { navLinks } from "@/lib/site-config";
+import { useLanguage } from "@/app/components/language-provider";
+import { getNavLinks } from "@/lib/i18n";
 
 export function SiteHeader({ variant = "dark" }: { variant?: "dark" | "light" }) {
   const isDark = variant === "dark";
+  const { locale, dict } = useLanguage();
+  const navLinks = getNavLinks(locale);
 
   return (
     <header
       className={`sticky top-0 z-40 border-b backdrop-blur-md transition-colors duration-300 ${
-        isDark
-          ? "border-white/10 bg-brand-dark/95"
-          : "border-border bg-surface/95"
+        isDark ? "border-white/10 bg-brand-dark/95" : "border-border bg-surface/95"
       }`}
     >
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
@@ -35,6 +39,7 @@ export function SiteHeader({ variant = "dark" }: { variant?: "dark" | "light" })
         </nav>
 
         <div className="flex items-center gap-2">
+          <LanguageSwitcher variant={isDark ? "dark" : "light"} />
           <CartButton variant={isDark ? "dark" : "light"} />
           <AccountLink variant={isDark ? "dark" : "light"} />
           <ThemeToggle variant={isDark ? "dark" : "light"} />
@@ -42,7 +47,7 @@ export function SiteHeader({ variant = "dark" }: { variant?: "dark" | "light" })
             href="/#quote"
             className="hidden rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-foreground transition hover:bg-accent-hover sm:inline-flex"
           >
-            Get a Quote
+            {dict.nav.getQuote}
           </Link>
           <MobileNav variant={isDark ? "dark" : "light"} />
         </div>

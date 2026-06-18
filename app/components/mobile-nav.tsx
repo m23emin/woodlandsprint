@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { navLinks } from "@/lib/site-config";
+import { useLanguage } from "@/app/components/language-provider";
+import { getNavLinks } from "@/lib/i18n";
 import { isBrowserAuthConfigured } from "@/lib/supabase/client";
 import { useCart } from "@/app/components/cart/cart-provider";
 
@@ -11,6 +12,8 @@ export function MobileNav({ variant = "dark" }: { variant?: "dark" | "light" }) 
   const [open, setOpen] = useState(false);
   const [signedIn, setSignedIn] = useState(false);
   const { count: cartCount } = useCart();
+  const { locale, dict } = useLanguage();
+  const navLinks = getNavLinks(locale);
   const isDark = variant === "dark";
 
   useEffect(() => {
@@ -71,7 +74,7 @@ export function MobileNav({ variant = "dark" }: { variant?: "dark" | "light" }) 
               style={{ backgroundColor: "var(--background)" }}
             >
               <div className="flex items-center justify-between border-b border-border bg-background px-5 py-4">
-                <span className="font-display text-lg font-semibold text-foreground">Menu</span>
+                <span className="font-display text-lg font-semibold text-foreground">{dict.nav.menu}</span>
                 <button
                   type="button"
                   aria-label="Close menu"
@@ -100,7 +103,7 @@ export function MobileNav({ variant = "dark" }: { variant?: "dark" | "light" }) 
                     onClick={() => setOpen(false)}
                     className="rounded-xl px-4 py-3.5 text-base font-semibold text-foreground transition hover:bg-brand/10 hover:text-brand"
                   >
-                    {signedIn ? "My Account" : "Sign in"}
+                    {signedIn ? dict.nav.account : dict.nav.signIn}
                   </Link>
                 )}
                 <Link
@@ -108,7 +111,8 @@ export function MobileNav({ variant = "dark" }: { variant?: "dark" | "light" }) 
                   onClick={() => setOpen(false)}
                   className="rounded-xl px-4 py-3.5 text-base font-semibold text-foreground transition hover:bg-brand/10 hover:text-brand"
                 >
-                  Cart{cartCount > 0 ? ` (${cartCount})` : ""}
+                  {dict.nav.cart}
+                  {cartCount > 0 ? ` (${cartCount})` : ""}
                 </Link>
               </div>
               <div className="border-t border-border bg-background p-4">
@@ -117,7 +121,7 @@ export function MobileNav({ variant = "dark" }: { variant?: "dark" | "light" }) 
                   onClick={() => setOpen(false)}
                   className="flex w-full items-center justify-center rounded-xl bg-accent px-4 py-3.5 text-sm font-semibold text-foreground transition hover:bg-accent-hover"
                 >
-                  Get a Quote
+                  {dict.nav.getQuote}
                 </Link>
               </div>
             </motion.nav>

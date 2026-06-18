@@ -1,25 +1,15 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useLanguage } from "@/app/components/language-provider";
 import { siteContact } from "@/lib/site-config";
 
 type Message = { role: "user" | "assistant"; content: string };
 
-const STARTER: Message = {
-  role: "assistant",
-  content: `Hi! I answer quick questions about turnaround, file formats, pickup, and pricing basics. For custom quotes, I'll connect you with our team by email.`,
-};
-
-const QUICK_PROMPTS = [
-  "What's your turnaround time?",
-  "Gang sheet pricing?",
-  "What file format do I need?",
-  "I need a custom quote",
-];
-
 export function ChatWidget() {
+  const { locale, dict } = useLanguage();
   const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([STARTER]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [email, setEmail] = useState("");
   const [needsEmail, setNeedsEmail] = useState(false);
@@ -29,6 +19,12 @@ export function ChatWidget() {
   const waHref = siteContact.whatsapp
     ? `https://wa.me/${siteContact.whatsapp}?text=${encodeURIComponent(siteContact.whatsappMessage)}`
     : null;
+
+  useEffect(() => {
+    setMessages([{ role: "assistant", content: dict.chat.starter }]);
+    setNeedsEmail(false);
+    setInput("");
+  }, [locale, dict.chat.starter]);
 
   useEffect(() => {
     if (open && listRef.current) {
@@ -51,6 +47,7 @@ export function ChatWidget() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           messages: nextMessages,
+          locale,
           ...(email ? { email } : {}),
         }),
       });
@@ -67,7 +64,7 @@ export function ChatWidget() {
           ...prev,
           {
             role: "assistant",
-            content: data.error || "Something went wrong. Try WhatsApp or call us directly.",
+            content: data.error || dict.chat.errorGeneric,
           },
         ]);
         return;
@@ -78,7 +75,7 @@ export function ChatWidget() {
     } catch {
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: "Connection error — please call or WhatsApp us." },
+        { role: "assistant", content: dict.chat.errorConnection },
       ]);
     } finally {
       setLoading(false);
@@ -93,7 +90,7 @@ export function ChatWidget() {
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages, email: email.trim() }),
+        body: JSON.stringify({ messages, email: email.trim(), locale }),
       });
       const data = (await response.json()) as { reply?: string };
       if (data.reply) {
@@ -114,8 +111,8 @@ export function ChatWidget() {
         >
           <div className="flex items-center justify-between border-b border-border bg-brand px-4 py-3 text-white">
             <div>
-              <p className="text-sm font-semibold">Quick Help</p>
-              <p className="text-xs text-white/75">Free FAQ answers · email for custom quotes</p>
+              <p className="text-sm font-semibold">{dict.chat.title}</p>
+              <p className="text-xs text-white/75">{dict.chat.subtitle}</p>
             </div>
             <button
               type="button"
@@ -148,14 +145,14 @@ export function ChatWidget() {
             ))}
             {loading && (
               <p className="text-xs text-muted" aria-live="polite">
-                Typing…
+                {dict.chat.typing}
               </p>
             )}
           </div>
 
           {messages.length <= 2 && (
             <div className="flex flex-wrap gap-2 border-t border-border bg-background px-3 py-2">
-              {QUICK_PROMPTS.map((prompt) => (
+              {dict.chat.prompts.map((prompt) => (
                 <button
                   key={prompt}
                   type="button"
@@ -170,14 +167,14 @@ export function ChatWidget() {
 
           {needsEmail && (
             <form onSubmit={submitEmail} className="border-t border-border bg-background p-3">
-              <label className="mb-1.5 block text-xs font-medium text-foreground">Your email for follow-up</label>
+              <label className="mb-1.5 block text-xs font-medium text-foreground">{dict.chat.emailLabel}</label>
               <div className="flex gap-2">
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@email.com"
+                  placeholder={dict.chat.emailPlaceholder}
                   className="min-w-0 flex-1 rounded-xl border border-border bg-surface px-3 py-2 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-brand/20"
                 />
                 <button
@@ -185,7 +182,7 @@ export function ChatWidget() {
                   disabled={loading}
                   className="shrink-0 rounded-xl bg-brand px-3 py-2 text-sm font-semibold text-white hover:bg-brand-light disabled:opacity-70"
                 >
-                  Send
+                  {dict.chat.emailSend}
                 </button>
               </div>
             </form>
@@ -203,7 +200,7 @@ export function ChatWidget() {
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask a question…"
+                placeholder={dict.chat.placeholder}
                 className="min-w-0 flex-1 rounded-xl border border-border bg-surface px-3 py-2.5 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-brand/20"
               />
               <button
@@ -211,7 +208,7 @@ export function ChatWidget() {
                 disabled={loading || !input.trim()}
                 className="shrink-0 rounded-xl bg-accent px-3.5 py-2.5 text-sm font-semibold text-foreground hover:bg-accent-hover disabled:opacity-50"
               >
-                Send
+                {dict.chat.send}
               </button>
             </form>
             {waHref && (
@@ -221,7 +218,7 @@ export function ChatWidget() {
                 rel="noopener noreferrer"
                 className="mt-2 flex items-center justify-center gap-2 text-xs font-semibold text-[#25D366] hover:underline"
               >
-                Prefer WhatsApp? Message us directly →
+                {dict.chat.whatsapp}
               </a>
             )}
           </div>

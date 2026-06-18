@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import { useAccountProfile } from "@/app/components/account/account-link";
 import { useCart } from "@/app/components/cart/cart-provider";
+import { useLanguage } from "@/app/components/language-provider";
 import { clearQuotePrefill, loadQuotePrefill } from "@/lib/quote-prefill";
 import { DesignUpload } from "./design-upload";
 import {
@@ -14,17 +15,12 @@ import {
   type SizeBreakdown,
 } from "./quote-size-breakdown";
 
-const serviceOptions = [
-  "DTF Gang Sheets",
-  "Custom T-Shirts",
-  "Business Apparel",
-  "Event & Bulk Orders",
-  "Not Sure Yet",
-];
-
 type FormStatus = "idle" | "submitting" | "success" | "error";
 
 export function QuoteForm() {
+  const { dict } = useLanguage();
+  const q = dict.quote;
+  const serviceOptions = q.services;
   const [status, setStatus] = useState<FormStatus>("idle");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -171,18 +167,16 @@ export function QuoteForm() {
               <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h3 className="text-xl font-semibold text-foreground">Quote request received</h3>
+          <h3 className="text-xl font-semibold text-foreground">{q.successTitle}</h3>
           <p className="mt-2 text-muted">
-            Thanks for reaching out. We&apos;ll review your details and get back to you shortly.
-            {customerEmailWarning
-              ? " We received your request — if you don't see a confirmation email, check spam or call us."
-              : " A confirmation email is on its way to your inbox."}
+            {q.successBody}
+            {customerEmailWarning ? q.successEmailWarn : q.successEmailOk}
             {profile && (
               <>
                 {" "}
-                Track this request in{" "}
+                {q.trackAccount}{" "}
                 <a href="/account" className="font-semibold text-brand hover:underline">
-                  your account
+                  {q.yourAccount}
                 </a>
                 .
               </>
@@ -193,7 +187,7 @@ export function QuoteForm() {
             onClick={() => setStatus("idle")}
             className="mt-6 text-sm font-semibold text-brand underline-offset-4 hover:underline"
           >
-            Submit another request
+            {q.submitAnother}
           </button>
         </div>
       ) : (
@@ -201,11 +195,11 @@ export function QuoteForm() {
           <input name="website" type="text" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden />
           {profile && (
             <p className="rounded-lg bg-brand/10 px-4 py-3 text-sm text-brand">
-              Signed in as {profile.email}. Your profile details are pre-filled below.
+              {q.signedIn} {profile.email}. {q.signedInNote}
             </p>
           )}
           <div className="grid gap-5 sm:grid-cols-2">
-            <Field label="Name" htmlFor="name" required>
+            <Field label={q.name} htmlFor="name" required>
               <input
                 id="name"
                 name="name"
@@ -213,12 +207,12 @@ export function QuoteForm() {
                 autoComplete="name"
                 required
                 className={inputClass}
-                placeholder="Your name"
+                placeholder={q.namePlaceholder}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
             </Field>
-            <Field label="Phone" htmlFor="phone" required>
+            <Field label={q.phone} htmlFor="phone" required>
               <input
                 id="phone"
                 name="phone"
@@ -233,7 +227,7 @@ export function QuoteForm() {
             </Field>
           </div>
 
-          <Field label="Email" htmlFor="email" required>
+          <Field label={q.email} htmlFor="email" required>
             <input
               id="email"
               name="email"
@@ -247,21 +241,21 @@ export function QuoteForm() {
             />
           </Field>
 
-          <Field label="Business Name" htmlFor="businessName">
+          <Field label={q.business} htmlFor="businessName">
             <input
               id="businessName"
               name="businessName"
               type="text"
               autoComplete="organization"
               className={inputClass}
-              placeholder="Optional — for bulk or business orders"
+              placeholder={q.businessPlaceholder}
               value={businessName}
               onChange={(e) => setBusinessName(e.target.value)}
             />
           </Field>
 
           <div className="grid gap-5 sm:grid-cols-2">
-            <Field label="Service Type" htmlFor="service">
+            <Field label={q.service} htmlFor="service">
               <select
                 id="service"
                 name="service"
@@ -270,7 +264,7 @@ export function QuoteForm() {
                 onChange={(e) => setService(e.target.value)}
               >
                 <option value="" disabled>
-                  Select a service
+                  {q.selectService}
                 </option>
                 {serviceOptions.map((option) => (
                   <option key={option} value={option}>
@@ -279,7 +273,7 @@ export function QuoteForm() {
                 ))}
               </select>
             </Field>
-            <Field label="Quantity" htmlFor="quantity">
+            <Field label={q.quantity} htmlFor="quantity">
               <input
                 id="quantity"
                 name="quantity"
@@ -288,7 +282,7 @@ export function QuoteForm() {
                 placeholder={
                   showSizeBreakdown(service) && sizeBreakdownTotal(sizes) > 0
                     ? `${sizeBreakdownTotal(sizes)} shirts (from sizes below)`
-                    : "e.g. 24 shirts"
+                    : q.quantityPlaceholder
                 }
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
@@ -300,26 +294,29 @@ export function QuoteForm() {
             <QuoteSizeBreakdown sizes={sizes} onChange={setSizes} />
           )}
 
-          <Field label="Need By Date" htmlFor="needBy">
+          <Field label={q.needBy} htmlFor="needBy">
             <input id="needBy" name="needBy" type="date" className={inputClass} />
           </Field>
 
-          <Field label="Upload Design" htmlFor="design">
+          <Field label={q.upload} htmlFor="design">
             <DesignUpload initialDataUrl={mockupDataUrl} initialName={mockupName} />
             {extraDesignCount > 0 && (
               <p className="mt-2 text-xs text-muted">
-                + {extraDesignCount} additional design{extraDesignCount !== 1 ? "s" : ""} from your cart will be included.
+                {(extraDesignCount === 1 ? q.extraDesignsSingular : q.extraDesignsPlural).replace(
+                  "{n}",
+                  String(extraDesignCount),
+                )}
               </p>
             )}
           </Field>
 
-          <Field label="Notes" htmlFor="notes">
+          <Field label={q.notes} htmlFor="notes">
             <textarea
               id="notes"
               name="notes"
               rows={4}
               className={`${inputClass} resize-y min-h-28`}
-              placeholder="Tell us about colors, sizes, placement, or any special requests."
+              placeholder={q.notesPlaceholder}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
             />
@@ -327,7 +324,7 @@ export function QuoteForm() {
 
           {status === "error" && (
             <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700 dark:bg-red-950/40 dark:text-red-300">
-              Something went wrong sending your request. Please check your details and try again, or call us directly.
+              {q.error}
             </p>
           )}
 
@@ -336,7 +333,7 @@ export function QuoteForm() {
             disabled={status === "submitting"}
             className="w-full rounded-xl bg-accent px-6 py-4 text-base font-semibold text-foreground shadow-sm transition hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-70"
           >
-            {status === "submitting" ? "Sending..." : "Request My Quote"}
+            {status === "submitting" ? q.sending : q.submit}
           </button>
         </form>
       )}
