@@ -5,6 +5,7 @@ import { GrainOverlay } from "./components/grain-overlay";
 import { ThemeProvider } from "./components/theme-provider";
 import { Analytics } from "./components/analytics";
 import { CartRoot } from "./components/cart/cart-root";
+import { ChatWidget } from "./components/chat/chat-widget";
 import { ContactFloat } from "./components/contact-float";
 import { StructuredData } from "./components/structured-data";
 import "./globals.css";
@@ -68,6 +69,7 @@ export default function RootLayout({
           <CartRoot>
             <GrainOverlay />
             {children}
+            <ChatWidget />
             <ContactFloat />
           </CartRoot>
         </ThemeProvider>
