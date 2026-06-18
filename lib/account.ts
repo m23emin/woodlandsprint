@@ -23,7 +23,9 @@ export type CustomerQuote = {
   design_filename: string | null;
   design_path: string | null;
   status: import("@/lib/quote-status").QuoteStatus;
+  quoted_amount: number | null;
+  quoted_message: string | null;
 };
 
 export const customerQuoteColumns =
-  "id, created_at, updated_at, name, phone, email, business_name, service, quantity, need_by, notes, design_filename, design_path, status";
+  "id, created_at, updated_at, name, phone, email, business_name, service, quantity, need_by, notes, design_filename, design_path, status, quoted_amount, quoted_message";

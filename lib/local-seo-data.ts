@@ -87,6 +87,63 @@ export const localSeoPages: LocalSeoPage[] = [
     ],
     cta: "Quote your gang sheet order",
   },
+  {
+    slug: "custom-shirts-tomball-tx",
+    title: "Custom T-Shirts in Tomball, TX | Woodlands Print",
+    metaDescription:
+      "Custom shirt printing in Tomball, TX. Team tees, business apparel, and event orders with fast local turnaround and pickup.",
+    headline: "Custom T-Shirts in Tomball, TX",
+    subheadline: "Team shirts, events & business apparel",
+    city: "Tomball",
+    intro:
+      "Tomball businesses and teams choose Woodlands Print for crisp custom shirts, competitive bulk pricing, and reliable North Houston service.",
+    services: [
+      "Custom t-shirts & hoodies",
+      "Business & team uniforms",
+      "School and church events",
+      "Bulk quantity discounts",
+      "Local pickup near Tomball",
+    ],
+    cta: "Request a Tomball quote",
+  },
+  {
+    slug: "dtf-transfers-magnolia-tx",
+    title: "DTF Transfers in Magnolia, TX | Woodlands Print",
+    metaDescription:
+      "DTF gang sheets and custom transfers for Magnolia, TX. Vibrant prints, fast quotes, and local North Houston pickup.",
+    headline: "DTF Transfers in Magnolia, TX",
+    subheadline: "Gang sheets & vibrant custom transfers",
+    city: "Magnolia",
+    intro:
+      "Magnolia-area creators and print shops rely on us for full-color DTF transfers, optimized gang sheets, and quick turnaround across Montgomery County.",
+    services: [
+      "DTF gang sheet printing",
+      "Custom transfer orders",
+      "Rush production available",
+      "Reseller-friendly pricing",
+      "Serving Magnolia & nearby areas",
+    ],
+    cta: "Get a Magnolia DTF quote",
+  },
+  {
+    slug: "custom-shirts-richmond-tx",
+    title: "Custom T-Shirts in Richmond, TX | Woodlands Print",
+    metaDescription:
+      "Custom t-shirt printing for Richmond, TX and Fort Bend County. Business apparel, events, and bulk orders with fast quotes.",
+    headline: "Custom T-Shirts in Richmond, TX",
+    subheadline: "Business, events & bulk shirt printing",
+    city: "Richmond",
+    intro:
+      "Serving Richmond and Fort Bend County with professional custom shirt printing — from small runs to large bulk orders with local support.",
+    services: [
+      "Custom tees & hoodies",
+      "Business & uniform printing",
+      "Event and church orders",
+      "Bulk pricing tiers",
+      "Pickup and shipping options",
+    ],
+    cta: "Request a Richmond quote",
+  },
 ];
 
 export function getLocalPageBySlug(slug: string): LocalSeoPage | undefined {

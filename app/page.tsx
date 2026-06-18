@@ -84,9 +84,9 @@ const serviceAreas = [
   { label: "Spring", href: "/custom-shirts-spring-tx" },
   { label: "Conroe", href: "/gang-sheet-printing-conroe" },
   { label: "Houston", href: "/dtf-printing-houston" },
-  { label: "Tomball", href: null },
-  { label: "Magnolia", href: null },
-  { label: "Richmond", href: null },
+  { label: "Tomball", href: "/custom-shirts-tomball-tx" },
+  { label: "Magnolia", href: "/dtf-transfers-magnolia-tx" },
+  { label: "Richmond", href: "/custom-shirts-richmond-tx" },
   { label: "North Houston", href: null },
 ];
 

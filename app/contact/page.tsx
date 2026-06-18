@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { SiteFooter } from "@/app/components/site-footer";
 import { SiteHeader } from "@/app/components/site-header";
+import { ContactForm } from "@/app/components/contact-form";
+import { WhatsAppIcon } from "@/app/components/icons/whatsapp-icon";
 import { FadeIn } from "@/app/components/motion/fade-in";
 import { serviceAreas, siteContact, siteName, sitePickup } from "@/lib/site-config";
 
@@ -61,6 +63,7 @@ export default function ContactPage() {
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 text-xl font-semibold text-[#25D366] hover:underline"
                 >
+                  <WhatsAppIcon className="h-6 w-6 shrink-0" />
                   Message us
                 </a>
                 <p className="mt-2 text-sm text-muted">Send artwork or ask for a quick quote.</p>
@@ -105,6 +108,11 @@ export default function ContactPage() {
               <p className="mt-2 text-sm text-muted">Serving {sitePickup.mapsQuery} and surrounding communities.</p>
             </ContactCard>
           </div>
+
+          <FadeIn className="mx-auto mt-12 max-w-2xl">
+            <h2 className="mb-6 text-center font-display text-2xl font-semibold text-foreground">Send a message</h2>
+            <ContactForm />
+          </FadeIn>
 
           <FadeIn className="mx-auto mt-12 max-w-6xl rounded-2xl border border-border bg-surface p-8 text-center sm:p-10">
             <h2 className="font-display text-2xl font-semibold text-foreground">Ready to print?</h2>

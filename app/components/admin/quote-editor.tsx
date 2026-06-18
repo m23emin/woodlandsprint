@@ -1,15 +1,28 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { StatusBadge } from "./status-badge";
 import type { QuoteRecord, QuoteStatus } from "@/lib/quote-status";
 import { quoteStatusOptions } from "@/lib/quote-status";
 
-export function QuoteEditor({ quote, designUrl }: { quote: QuoteRecord; designUrl: string | null }) {
+export function QuoteEditor({
+  quote,
+  designUrl,
+  extraDesignUrls = [],
+}: {
+  quote: QuoteRecord;
+  designUrl: string | null;
+  extraDesignUrls?: { filename: string; url: string }[];
+}) {
   const router = useRouter();
   const [status, setStatus] = useState<QuoteStatus>(quote.status);
   const [internalNotes, setInternalNotes] = useState(quote.internal_notes ?? "");
+  const [quotedAmount, setQuotedAmount] = useState(
+    quote.quoted_amount != null ? String(quote.quoted_amount) : "",
+  );
+  const [quotedMessage, setQuotedMessage] = useState(quote.quoted_message ?? "");
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -17,10 +30,17 @@ export function QuoteEditor({ quote, designUrl }: { quote: QuoteRecord; designUr
     setSaving(true);
     setMessage("");
 
+    const amount = quotedAmount.trim() ? Number(quotedAmount) : null;
+
     const response = await fetch(`/api/admin/quotes/${quote.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status, internal_notes: internalNotes }),
+      body: JSON.stringify({
+        status,
+        internal_notes: internalNotes,
+        quoted_amount: amount,
+        quoted_message: quotedMessage || null,
+      }),
     });
 
     setSaving(false);
@@ -30,7 +50,8 @@ export function QuoteEditor({ quote, designUrl }: { quote: QuoteRecord; designUr
       return;
     }
 
-    setMessage("Saved.");
+    const data = (await response.json()) as { emailSent?: boolean };
+    setMessage(data.emailSent ? "Saved. Customer notified by email." : "Saved.");
     router.refresh();
   }
 
@@ -76,7 +97,27 @@ export function QuoteEditor({ quote, designUrl }: { quote: QuoteRecord; designUr
         </div>
       )}
 
-      <div className="rounded-xl border border-border bg-surface p-4 space-y-4">
+      {extraDesignUrls.length > 0 && (
+        <div className="rounded-xl border border-border bg-surface p-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted">Additional designs</p>
+          <ul className="mt-2 space-y-1">
+            {extraDesignUrls.map((item) => (
+              <li key={item.url}>
+                <a
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm font-semibold text-brand hover:underline"
+                >
+                  {item.filename} →
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <div className="space-y-4 rounded-xl border border-border bg-surface p-4">
         <p className="text-xs font-semibold uppercase tracking-wide text-muted">Production status</p>
 
         <label className="block">
@@ -92,6 +133,31 @@ export function QuoteEditor({ quote, designUrl }: { quote: QuoteRecord; designUr
               </option>
             ))}
           </select>
+        </label>
+
+        <label className="block">
+          <span className="mb-1.5 block text-sm font-medium text-foreground">Quoted amount ($)</span>
+          <input
+            type="number"
+            min={0}
+            step="0.01"
+            value={quotedAmount}
+            onChange={(e) => setQuotedAmount(e.target.value)}
+            placeholder="e.g. 149.00"
+            className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-brand/20"
+          />
+          <p className="mt-1 text-xs text-muted">Visible to customer when status is Quoted.</p>
+        </label>
+
+        <label className="block">
+          <span className="mb-1.5 block text-sm font-medium text-foreground">Message to customer</span>
+          <textarea
+            value={quotedMessage}
+            onChange={(e) => setQuotedMessage(e.target.value)}
+            rows={3}
+            className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-brand/20"
+            placeholder="Pickup details, artwork notes, payment instructions..."
+          />
         </label>
 
         <label className="block">

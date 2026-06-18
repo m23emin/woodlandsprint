@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { AdminShell, QuoteTable, StatsGrid } from "@/app/components/admin/admin-shell";
+import { AdminShell, StatsGrid } from "@/app/components/admin/admin-shell";
+import { QuoteTable } from "@/app/components/admin/quote-table";
 import { isSupabaseConfigured } from "@/lib/supabase/admin";
 import { listQuotes } from "@/lib/quotes";
 

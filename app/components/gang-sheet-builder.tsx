@@ -96,7 +96,7 @@ export function GangSheetBuilder() {
       <div className="flex flex-col gap-4">
 
         {/* Toolbar */}
-        <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-surface px-4 py-2.5">
+        <div className="flex flex-wrap items-center gap-2 overflow-x-auto rounded-xl border border-border bg-surface px-3 py-2.5 sm:px-4">
           {/* Upload */}
           <input
             ref={fileInputRef}
@@ -169,7 +169,7 @@ export function GangSheetBuilder() {
             e.preventDefault();
             if (e.dataTransfer.files.length) addFiles(e.dataTransfer.files);
           }}
-          className="relative"
+          className="relative -mx-1 overflow-x-auto sm:mx-0"
         >
           <GangSheetCanvas
             ref={canvasRef}

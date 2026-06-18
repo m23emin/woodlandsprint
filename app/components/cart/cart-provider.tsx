@@ -52,8 +52,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const removeItem = useCallback(
     (id: string) => {
+      const item = loadCart().find((i) => i.id === id);
+      if (item?.attachmentId) removeCartAttachment(item.attachmentId);
       const next = loadCart().filter((item) => item.id !== id);
-      removeCartAttachment(id);
       persist(next);
     },
     [persist],

@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { localSeoPages } from "@/lib/local-seo-data";
+import { getSiteUrl } from "@/lib/site-url";
 
 const staticPages = [
   "",
@@ -24,7 +25,7 @@ const staticPages = [
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://woodlandsprint.com";
+  const baseUrl = getSiteUrl();
 
   return [
     ...staticPages.map((path) => ({

@@ -56,6 +56,12 @@ export function SignInForm() {
           />
         </AccountField>
 
+        <p className="text-right text-sm">
+          <Link href="/account/forgot-password" className="font-medium text-brand hover:underline">
+            Forgot password?
+          </Link>
+        </p>
+
         {state?.error && (
           <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700 dark:bg-red-950/40 dark:text-red-300">
             {state.error}

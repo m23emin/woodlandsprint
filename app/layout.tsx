@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Geist } from "next/font/google";
+import { getSiteUrl } from "@/lib/site-url";
 import { GrainOverlay } from "./components/grain-overlay";
 import { ThemeProvider } from "./components/theme-provider";
 import { Analytics } from "./components/analytics";
@@ -20,6 +21,7 @@ const fraunces = Fraunces({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(getSiteUrl()),
   title: "Woodlands Print | DTF Transfers & Custom T-Shirts in The Woodlands, TX",
   description:
     "Premium DTF transfers, custom t-shirts, business apparel, and bulk event orders with fast turnaround. Serving The Woodlands, Spring, Conroe, Tomball, Magnolia, Richmond, and surrounding areas.",

@@ -3,8 +3,10 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { customerQuoteColumns, type CustomerProfile } from "@/lib/account";
+import { linkQuotesToUserByEmail } from "@/lib/quotes";
 import { createClient, tryCreateClient } from "@/lib/supabase/server";
 import { isSupabaseAuthConfigured } from "@/lib/supabase/env";
+import { getSiteUrl } from "@/lib/site-url";
 
 export async function signUpAction(_prev: unknown, formData: FormData) {
   if (!isSupabaseAuthConfigured()) {
@@ -26,7 +28,7 @@ export async function signUpAction(_prev: unknown, formData: FormData) {
   }
 
   const supabase = await createClient();
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const siteUrl = getSiteUrl();
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
@@ -44,8 +46,13 @@ export async function signUpAction(_prev: unknown, formData: FormData) {
     return { error: error.message };
   }
 
-  if (data.session) {
+  if (data.session && data.user) {
+    await linkQuotesToUserByEmail(email, data.user.id);
     redirect("/account");
+  }
+
+  if (data.user) {
+    await linkQuotesToUserByEmail(email, data.user.id);
   }
 
   redirect("/account/login?registered=1");
@@ -65,10 +72,14 @@ export async function signInAction(_prev: unknown, formData: FormData) {
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
     return { error: "Invalid email or password." };
+  }
+
+  if (data.user) {
+    await linkQuotesToUserByEmail(email, data.user.id);
   }
 
   redirect(next.startsWith("/account") ? next : "/account");
@@ -204,4 +215,60 @@ export async function getCustomerQuote(id: string) {
     .single();
 
   return data;
+}
+
+export async function requestPasswordResetAction(_prev: unknown, formData: FormData) {
+  if (!isSupabaseAuthConfigured()) {
+    return { error: "Password reset is not configured yet." };
+  }
+
+  const email = String(formData.get("email") ?? "").trim().toLowerCase();
+  if (!email) {
+    return { error: "Email is required." };
+  }
+
+  const supabase = await createClient();
+  const siteUrl = getSiteUrl();
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${siteUrl}/auth/callback?next=/account/reset-password`,
+  });
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  return { ok: true as const };
+}
+
+export async function updatePasswordAction(_prev: unknown, formData: FormData) {
+  if (!isSupabaseAuthConfigured()) {
+    return { error: "Password reset is not configured yet." };
+  }
+
+  const password = String(formData.get("password") ?? "");
+  const confirm = String(formData.get("confirmPassword") ?? "");
+
+  if (password.length < 8) {
+    return { error: "Password must be at least 8 characters." };
+  }
+
+  if (password !== confirm) {
+    return { error: "Passwords do not match." };
+  }
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: "Your reset link expired. Request a new one." };
+  }
+
+  const { error } = await supabase.auth.updateUser({ password });
+  if (error) {
+    return { error: error.message };
+  }
+
+  redirect("/account");
 }

@@ -223,6 +223,29 @@ export const galleryItems: GalleryItem[] = [
   },
 ];
 
+export const pricingFaqItems = [
+  {
+    q: "Are there any setup or color fees?",
+    a: "No. We charge by size and quantity only. Full-color, gradients, and photos are the same price as a single-color design.",
+  },
+  {
+    q: "What's the minimum order?",
+    a: "No minimum — order one gang sheet or one shirt. Volume discounts apply automatically as your quantity grows.",
+  },
+  {
+    q: "How does the rush fee work?",
+    a: "Rush adds 20% to your order total and moves your job to same-day or next-day production. Let us know your deadline in the quote.",
+  },
+  {
+    q: "Do prices include blanks for shirts?",
+    a: "Yes. Shirt prices include a standard Gildan or comparable blank. Premium blanks (Next Level, Bella+Canvas) are available at a small upcharge.",
+  },
+  {
+    q: "Can I get a discount for repeat orders?",
+    a: "We offer reorder pricing for returning customers. Mention it in your quote and we'll note it on your account.",
+  },
+];
+
 export const faqItems = [
   {
     q: "How fast can you turn around my order?",

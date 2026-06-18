@@ -35,6 +35,9 @@ export function QuoteForm() {
   const [notes, setNotes] = useState("");
   const [mockupDataUrl, setMockupDataUrl] = useState<string | null>(null);
   const [mockupName, setMockupName] = useState<string | null>(null);
+  const [extraDesignCount, setExtraDesignCount] = useState(0);
+  const [extraDesignFiles, setExtraDesignFiles] = useState<File[]>([]);
+  const [customerEmailWarning, setCustomerEmailWarning] = useState(false);
   const [sizes, setSizes] = useState<SizeBreakdown>(() => emptySizeBreakdown());
   const { profile, loaded: profileLoaded } = useAccountProfile();
   const { clearCart } = useCart();
@@ -75,6 +78,27 @@ export function QuoteForm() {
       setMockupDataUrl(prefill.mockupImage);
       setMockupName(typeof prefill.mockupName === "string" ? prefill.mockupName : "mockup.png");
     }
+    if (typeof prefill.extraDesignsJson === "string" && prefill.extraDesignsJson) {
+      try {
+        const extras = JSON.parse(prefill.extraDesignsJson) as { dataUrl: string; name: string }[];
+        void (async () => {
+          const files: File[] = [];
+          for (const item of extras) {
+            try {
+              const res = await fetch(item.dataUrl);
+              const blob = await res.blob();
+              files.push(new File([blob], item.name, { type: blob.type || "image/png" }));
+            } catch {
+              /* skip broken attachment */
+            }
+          }
+          setExtraDesignFiles(files);
+          setExtraDesignCount(files.length);
+        })();
+      } catch {
+        /* ignore */
+      }
+    }
     clearQuotePrefill();
   }, []);
 
@@ -100,11 +124,17 @@ export function QuoteForm() {
       formData.set("quantity", `${sizeTotal} shirts`);
     }
 
+    for (const file of extraDesignFiles) {
+      formData.append("design", file);
+    }
+
     try {
       const response = await fetch("/api/quote", {
         method: "POST",
         body: formData,
       });
+
+      const data = (await response.json()) as { customerEmailWarning?: boolean };
 
       if (!response.ok) {
         setStatus("error");
@@ -112,6 +142,7 @@ export function QuoteForm() {
       }
 
       clearCart();
+      setCustomerEmailWarning(Boolean(data.customerEmailWarning));
       setStatus("success");
       form.reset();
       setName(profile?.fullName ?? "");
@@ -124,6 +155,8 @@ export function QuoteForm() {
       setSizes(emptySizeBreakdown());
       setMockupDataUrl(null);
       setMockupName(null);
+      setExtraDesignFiles([]);
+      setExtraDesignCount(0);
     } catch {
       setStatus("error");
     }
@@ -141,7 +174,9 @@ export function QuoteForm() {
           <h3 className="text-xl font-semibold text-foreground">Quote request received</h3>
           <p className="mt-2 text-muted">
             Thanks for reaching out. We&apos;ll review your details and get back to you shortly.
-            A confirmation email is on its way to your inbox.
+            {customerEmailWarning
+              ? " We received your request — if you don't see a confirmation email, check spam or call us."
+              : " A confirmation email is on its way to your inbox."}
             {profile && (
               <>
                 {" "}
@@ -163,6 +198,7 @@ export function QuoteForm() {
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-5">
+          <input name="website" type="text" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden />
           {profile && (
             <p className="rounded-lg bg-brand/10 px-4 py-3 text-sm text-brand">
               Signed in as {profile.email}. Your profile details are pre-filled below.
@@ -270,6 +306,11 @@ export function QuoteForm() {
 
           <Field label="Upload Design" htmlFor="design">
             <DesignUpload initialDataUrl={mockupDataUrl} initialName={mockupName} />
+            {extraDesignCount > 0 && (
+              <p className="mt-2 text-xs text-muted">
+                + {extraDesignCount} additional design{extraDesignCount !== 1 ? "s" : ""} from your cart will be included.
+              </p>
+            )}
           </Field>
 
           <Field label="Notes" htmlFor="notes">
@@ -315,13 +356,13 @@ function Field({
   children: React.ReactNode;
 }) {
   return (
-    <div className="block">
+    <label htmlFor={htmlFor} className="block">
       <span className="mb-1.5 block text-sm font-medium text-foreground">
         {label}
         {required && <span className="text-brand"> *</span>}
       </span>
       {children}
-    </div>
+    </label>
   );
 }
 

@@ -24,6 +24,9 @@ export type QuoteRecord = {
   status: QuoteStatus;
   internal_notes: string | null;
   user_id: string | null;
+  quoted_amount: number | null;
+  quoted_message: string | null;
+  additional_designs: { path: string; filename: string }[] | null;
 };
 
 export const quoteStatusOptions: { value: QuoteStatus; label: string; color: string }[] = [

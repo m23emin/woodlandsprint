@@ -38,10 +38,6 @@ export function getCartCount(items: CartItem[]) {
   return items.reduce((sum, item) => sum + item.quantity, 0);
 }
 
-export function getCartSubtotal(items: CartItem[]) {
-  return items.reduce((sum, item) => sum + (item.totalPrice ?? item.unitPrice ?? 0) * (item.totalPrice ? 1 : item.quantity), 0);
-}
-
 /** When totalPrice is set per line, use it directly; else unitPrice × qty */
 export function getLineTotal(item: CartItem) {
   if (item.totalPrice != null) return item.totalPrice;

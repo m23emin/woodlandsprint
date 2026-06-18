@@ -1,4 +1,5 @@
 import { getSupabaseAdmin, QUOTE_DESIGNS_BUCKET } from "@/lib/supabase/admin";
+import { getSiteUrl } from "@/lib/site-url";
 import type { QuoteRecord, QuoteStatus } from "@/lib/quote-status";
 
 export type SaveQuoteInput = {
@@ -10,7 +11,7 @@ export type SaveQuoteInput = {
   quantity?: string;
   needBy?: string;
   notes?: string;
-  design?: File | null;
+  designs?: File[];
   userId?: string | null;
 };
 
@@ -43,25 +44,38 @@ export async function saveQuoteRequest(input: SaveQuoteInput) {
     return { saved: false as const, reason: "insert_failed" as const };
   }
 
-  if (input.design && input.design.size > 0) {
-    const path = `${quote.id}/${Date.now()}-${sanitizeFilename(input.design.name)}`;
-    const buffer = Buffer.from(await input.design.arrayBuffer());
+  const designs = (input.designs ?? []).filter((f) => f.size > 0);
+  const additionalDesigns: { path: string; filename: string }[] = [];
+
+  for (let i = 0; i < designs.length; i++) {
+    const file = designs[i];
+    const path = `${quote.id}/${Date.now()}-${i}-${sanitizeFilename(file.name)}`;
+    const buffer = Buffer.from(await file.arrayBuffer());
 
     const { error: uploadError } = await supabase.storage
       .from(QUOTE_DESIGNS_BUCKET)
       .upload(path, buffer, {
-        contentType: input.design.type || "application/octet-stream",
+        contentType: file.type || "application/octet-stream",
         upsert: false,
       });
 
     if (uploadError) {
       logSupabaseError("upload design", uploadError);
-    } else {
+      continue;
+    }
+
+    if (i === 0) {
       await supabase
         .from("quotes")
-        .update({ design_path: path, design_filename: input.design.name })
+        .update({ design_path: path, design_filename: file.name })
         .eq("id", quote.id);
+    } else {
+      additionalDesigns.push({ path, filename: file.name });
     }
+  }
+
+  if (additionalDesigns.length > 0) {
+    await supabase.from("quotes").update({ additional_designs: additionalDesigns }).eq("id", quote.id);
   }
 
   return { saved: true as const, id: quote.id };
@@ -95,7 +109,12 @@ export async function getQuoteById(id: string): Promise<QuoteRecord | null> {
 
 export async function updateQuote(
   id: string,
-  patch: { status?: QuoteStatus; internal_notes?: string | null },
+  patch: {
+    status?: QuoteStatus;
+    internal_notes?: string | null;
+    quoted_amount?: number | null;
+    quoted_message?: string | null;
+  },
 ) {
   const supabase = getSupabaseAdmin();
   if (!supabase) return { ok: false as const };
@@ -116,6 +135,34 @@ export async function getDesignSignedUrl(path: string, expiresIn = 3600) {
   const { data, error } = await supabase.storage.from(QUOTE_DESIGNS_BUCKET).createSignedUrl(path, expiresIn);
   if (error) return null;
   return data.signedUrl;
+}
+
+/** Attach past guest quotes to a newly registered / signed-in user by email. */
+export async function linkQuotesToUserByEmail(email: string, userId: string) {
+  const supabase = getSupabaseAdmin();
+  if (!supabase) return 0;
+
+  const { data, error } = await supabase.rpc("link_quotes_to_user", {
+    p_user_id: userId,
+    p_email: email.toLowerCase(),
+  });
+
+  if (error) {
+    const { data: updated } = await supabase
+      .from("quotes")
+      .update({ user_id: userId })
+      .ilike("email", email)
+      .is("user_id", null)
+      .select("id");
+
+    return updated?.length ?? 0;
+  }
+
+  return typeof data === "number" ? data : 0;
+}
+
+export function getAdminQuoteUrl(quoteId: string) {
+  return `${getSiteUrl()}/admin/quotes/${quoteId}`;
 }
 
 function sanitizeFilename(name: string) {

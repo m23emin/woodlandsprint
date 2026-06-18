@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 import { useCart } from "@/app/components/cart/cart-provider";
-import { getFirstCartAttachment } from "@/lib/cart-attachments";
+import { getAllCartAttachments } from "@/lib/cart-attachments";
 import { formatCartForQuote, getLineTotal } from "@/lib/cart";
 import { saveQuotePrefill } from "@/lib/quote-prefill";
 
@@ -19,12 +19,14 @@ export function CartView() {
 
   function handleQuote() {
     const { service, quantity, notes } = formatCartForQuote(items);
-    const attachment = getFirstCartAttachment(items);
+    const attachments = getAllCartAttachments(items);
+    const [first, ...rest] = attachments;
     saveQuotePrefill({
       service,
       quantity,
       notes,
-      ...(attachment ? { mockupImage: attachment.dataUrl, mockupName: attachment.name } : {}),
+      ...(first ? { mockupImage: first.dataUrl, mockupName: first.name } : {}),
+      ...(rest.length > 0 ? { extraDesignsJson: JSON.stringify(rest) } : {}),
     });
     router.push("/#quote");
   }

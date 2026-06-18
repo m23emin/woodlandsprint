@@ -17,7 +17,16 @@ export default async function AccountPage() {
   const [profile, quotes] = await Promise.all([getCustomerProfile(), getCustomerQuotes()]);
 
   if (!profile) {
-    return null;
+    return (
+      <AccountDashboardShell>
+        <div className="rounded-2xl border border-border bg-surface p-8 text-center">
+          <p className="text-muted">Could not load your profile. Please sign in again.</p>
+          <Link href="/account/login" className="mt-4 inline-flex text-sm font-semibold text-brand hover:underline">
+            Sign in →
+          </Link>
+        </div>
+      </AccountDashboardShell>
+    );
   }
 
   return (

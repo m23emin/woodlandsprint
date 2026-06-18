@@ -1,14 +1,24 @@
 import { Resend } from "resend";
 import { NextResponse } from "next/server";
 import { buildCustomerQuoteEmail } from "@/lib/quote-emails";
-import { saveQuoteRequest } from "@/lib/quotes";
+import { getClientIp, rateLimit } from "@/lib/rate-limit";
+import { getAdminQuoteUrl, saveQuoteRequest } from "@/lib/quotes";
+import { getSiteUrl } from "@/lib/site-url";
 import { tryCreateClient } from "@/lib/supabase/server";
 
 function getString(value: FormDataEntryValue | null): string {
   return typeof value === "string" ? value.trim() : "";
 }
 
+const NOTIFY_STATUSES = new Set(["reviewing", "quoted", "production", "ready", "completed", "declined"]);
+
 export async function POST(request: Request) {
+  const ip = getClientIp(request);
+  const limited = rateLimit(`quote:${ip}`, 5, 60 * 60 * 1000);
+  if (!limited.ok) {
+    return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
+  }
+
   const apiKey = process.env.RESEND_API_KEY;
   const toEmail = process.env.QUOTE_TO_EMAIL;
   const fromEmail = process.env.QUOTE_FROM_EMAIL;
@@ -18,6 +28,11 @@ export async function POST(request: Request) {
   }
 
   const formData = await request.formData();
+
+  // Honeypot — bots fill hidden fields
+  if (getString(formData.get("website"))) {
+    return NextResponse.json({ ok: true });
+  }
 
   const name = getString(formData.get("name"));
   const phone = getString(formData.get("phone"));
@@ -35,8 +50,8 @@ export async function POST(request: Request) {
     );
   }
 
-  const designEntry = formData.get("design");
-  const design = designEntry instanceof File && designEntry.size > 0 ? designEntry : null;
+  const designEntries = formData.getAll("design");
+  const designs = designEntries.filter((entry): entry is File => entry instanceof File && entry.size > 0);
 
   let userId: string | null = null;
   const supabase = await tryCreateClient();
@@ -56,19 +71,20 @@ export async function POST(request: Request) {
     quantity,
     needBy,
     notes,
-    design,
+    designs,
     userId,
   });
 
-  const attachments = design
-    ? [
-        {
-          filename: design.name,
-          content: Buffer.from(await design.arrayBuffer()),
-          contentType: design.type || undefined,
-        },
-      ]
-    : undefined;
+  const attachments =
+    designs.length > 0
+      ? await Promise.all(
+          designs.map(async (design) => ({
+            filename: design.name,
+            content: Buffer.from(await design.arrayBuffer()),
+            contentType: design.type || undefined,
+          })),
+        )
+      : undefined;
 
   const rows = [
     ["Name", name],
@@ -79,8 +95,12 @@ export async function POST(request: Request) {
     ["Quantity", quantity || "Not specified"],
     ["Need By", needBy || "Not specified"],
     ["Notes", notes || "None"],
+    ...(designs.length > 1 ? [[`Design files`, `${designs.length} attached`] as const] : []),
     ...(dbResult.saved ? [["Admin ID", dbResult.id] as const] : []),
   ];
+
+  const siteUrl = getSiteUrl();
+  const adminUrl = dbResult.saved ? getAdminQuoteUrl(dbResult.id) : "";
 
   const html = `
     <h2>New quote request</h2>
@@ -92,15 +112,14 @@ export async function POST(request: Request) {
         )
         .join("")}
     </table>
-    ${dbResult.saved ? `<p><a href="${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/admin/quotes/${dbResult.id}">View in admin panel</a></p>` : ""}
+    ${adminUrl ? `<p><a href="${adminUrl}">View in admin panel</a></p>` : ""}
   `.trim();
 
   const text = rows.map(([label, value]) => `${label}: ${value}`).join("\n");
-
   const subjectParts = [service || "Quote", quantity ? `(${quantity})` : "", `— ${name}`].filter(Boolean);
 
   const resend = new Resend(apiKey);
-  const { error } = await resend.emails.send({
+  const { error: adminError } = await resend.emails.send({
     from: fromEmail,
     to: toEmail,
     replyTo: email,
@@ -110,12 +129,18 @@ export async function POST(request: Request) {
     attachments,
   });
 
-  if (error) {
-    console.error("Resend error:", error);
-    return NextResponse.json({ error: "Failed to send quote request." }, { status: 502 });
+  if (adminError) {
+    console.error("Resend admin error:", adminError);
+    return NextResponse.json(
+      {
+        error: "Failed to send quote request.",
+        quoteId: dbResult.saved ? dbResult.id : null,
+        saved: dbResult.saved,
+      },
+      { status: 502 },
+    );
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.woodlandsprint.com";
   const customerEmail = buildCustomerQuoteEmail({
     name,
     email,
@@ -134,11 +159,12 @@ export async function POST(request: Request) {
     text: customerEmail.text,
   });
 
-  if (customerError) {
-    console.error("Customer confirmation email error:", customerError);
-  }
-
-  return NextResponse.json({ ok: true, quoteId: dbResult.saved ? dbResult.id : null });
+  return NextResponse.json({
+    ok: true,
+    quoteId: dbResult.saved ? dbResult.id : null,
+    customerEmailSent: !customerError,
+    ...(customerError ? { customerEmailWarning: true } : {}),
+  });
 }
 
 function escapeHtml(value: string): string {

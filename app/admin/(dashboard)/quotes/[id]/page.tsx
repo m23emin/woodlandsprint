@@ -17,13 +17,22 @@ export default async function AdminQuoteDetailPage({ params }: { params: Promise
   if (!quote) notFound();
 
   const designUrl = quote.design_path ? await getDesignSignedUrl(quote.design_path) : null;
+  const extraDesigns = quote.additional_designs ?? [];
+  const extraDesignUrls = (
+    await Promise.all(
+      extraDesigns.map(async (item) => {
+        const url = await getDesignSignedUrl(item.path);
+        return url ? { filename: item.filename, url } : null;
+      }),
+    )
+  ).filter((item): item is { filename: string; url: string } => item != null);
 
   return (
     <AdminShell>
       <Link href="/admin" className="mb-6 inline-flex text-sm font-medium text-brand hover:underline">
         ← Back to quotes
       </Link>
-      <QuoteEditor quote={quote} designUrl={designUrl} />
+      <QuoteEditor quote={quote} designUrl={designUrl} extraDesignUrls={extraDesignUrls} />
     </AdminShell>
   );
 }

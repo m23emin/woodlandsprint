@@ -56,6 +56,18 @@ export default async function CustomerQuotePage({ params }: { params: Promise<{ 
           <StatusBadge status={quote.status} />
         </div>
 
+        {quote.quoted_amount != null && (
+          <div className="mt-6 rounded-xl border border-brand/20 bg-brand/5 p-5">
+            <p className="text-xs font-semibold uppercase tracking-wider text-brand">Your quote</p>
+            <p className="mt-1 font-display text-3xl font-bold text-foreground">
+              ${Number(quote.quoted_amount).toFixed(2)}
+            </p>
+            {quote.quoted_message && (
+              <p className="mt-3 whitespace-pre-wrap text-sm text-muted">{quote.quoted_message}</p>
+            )}
+          </div>
+        )}
+
         <dl className="mt-8 grid gap-4 sm:grid-cols-2">
           {rows.map(([label, value]) => (
             <div key={label} className="rounded-xl border border-border bg-background/50 p-4">

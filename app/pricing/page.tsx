@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { SiteHeader } from "@/app/components/site-header";
 import { SiteFooter } from "@/app/components/site-footer";
+import { FaqStructuredData } from "@/app/components/faq-structured-data";
 import { FadeIn, StaggerGrid, StaggerItem } from "@/app/components/motion/fade-in";
+import { pricingFaqItems } from "@/lib/site-config";
 import { gangSheetSizes, gangSheetVolumeBreaks, gangSheetPrice } from "@/lib/pricing-calculator";
 
 export const metadata: Metadata = {
@@ -10,6 +12,11 @@ export const metadata: Metadata = {
   description:
     "Transparent pricing for DTF gang sheets, custom t-shirts, and bulk apparel orders in The Woodlands & North Houston. Volume discounts, no hidden fees.",
   alternates: { canonical: "/pricing" },
+  openGraph: {
+    title: "Pricing — Woodlands Print",
+    description: "Transparent DTF gang sheet and custom shirt pricing for North Houston.",
+    images: [{ url: "/brand/logo-full.png", width: 1200, height: 630, alt: "Woodlands Print" }],
+  },
 };
 
 const shirtQtyTiers = [
@@ -34,6 +41,7 @@ function shirtPrice(qty: number, multiplier: number) {
 export default function PricingPage() {
   return (
     <>
+      <FaqStructuredData items={pricingFaqItems} id="/pricing#faq" />
       <SiteHeader variant="dark" />
       <main>
         {/* Hero */}
@@ -220,13 +228,7 @@ export default function PricingPage() {
               <h2 className="font-display mt-2 text-center text-3xl font-bold text-foreground">Pricing questions</h2>
             </FadeIn>
             <div className="mt-10 space-y-4">
-              {[
-                { q: "Are there any setup or color fees?", a: "No. We charge by size and quantity only. Full-color, gradients, and photos are the same price as a single-color design." },
-                { q: "What's the minimum order?", a: "No minimum — order one gang sheet or one shirt. Volume discounts apply automatically as your quantity grows." },
-                { q: "How does the rush fee work?", a: "Rush adds 20% to your order total and moves your job to same-day or next-day production. Let us know your deadline in the quote." },
-                { q: "Do prices include blanks for shirts?", a: "Yes. Shirt prices include a standard Gildan or comparable blank. Premium blanks (Next Level, Bella+Canvas) are available at a small upcharge." },
-                { q: "Can I get a discount for repeat orders?", a: "We offer reorder pricing for returning customers. Mention it in your quote and we'll note it on your account." },
-              ].map((item) => (
+              {pricingFaqItems.map((item) => (
                 <FadeIn key={item.q}>
                   <div className="rounded-2xl border border-border bg-background p-6">
                     <dt className="font-semibold text-foreground">{item.q}</dt>

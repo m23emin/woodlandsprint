@@ -1,11 +1,12 @@
 import { faqItems, siteContact, siteName } from "@/lib/site-config";
+import { getSiteUrl } from "@/lib/site-url";
 
 /**
  * LocalBusiness + WebSite JSON-LD for rich results and local SEO.
  * Service-area business (no public storefront address required).
  */
 export function StructuredData() {
-  const url = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.woodlandsprint.com";
+  const url = getSiteUrl();
 
   const areas = [
     "The Woodlands",

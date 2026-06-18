@@ -6,7 +6,7 @@ import { SiteFooter } from "../components/site-footer";
 import { SiteHeader } from "../components/site-header";
 
 export const metadata: Metadata = {
-  title: "Logo Karşılaştırma | Woodlands Print",
+  title: "Logo Comparison | Woodlands Print",
   robots: { index: false, follow: false },
 };
 

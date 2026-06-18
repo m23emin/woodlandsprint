@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { StatusBadge } from "./status-badge";
 import type { QuoteRecord } from "@/lib/quote-status";
 
 export function AdminShell({ children }: { children: React.ReactNode }) {
@@ -36,59 +35,6 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         </div>
       </header>
       <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">{children}</main>
-    </div>
-  );
-}
-
-export function QuoteTable({ quotes }: { quotes: QuoteRecord[] }) {
-  if (quotes.length === 0) {
-    return (
-      <div className="rounded-2xl border border-dashed border-border bg-surface px-6 py-12 text-center">
-        <p className="font-medium text-foreground">No quote requests yet</p>
-        <p className="mt-2 text-sm text-muted">New form submissions will appear here when Supabase is connected.</p>
-      </div>
-    );
-  }
-
-  return (
-    <div className="overflow-hidden rounded-2xl border border-border bg-surface">
-      <div className="overflow-x-auto">
-        <table className="min-w-full text-left text-sm">
-          <thead className="border-b border-border bg-background text-xs uppercase tracking-wide text-muted">
-            <tr>
-              <th className="px-4 py-3 font-semibold">Customer</th>
-              <th className="px-4 py-3 font-semibold">Service</th>
-              <th className="px-4 py-3 font-semibold">Qty</th>
-              <th className="px-4 py-3 font-semibold">Status</th>
-              <th className="px-4 py-3 font-semibold">Submitted</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-border">
-            {quotes.map((quote) => (
-              <tr key={quote.id} className="transition hover:bg-background/60">
-                <td className="px-4 py-3">
-                  <Link href={`/admin/quotes/${quote.id}`} className="font-medium text-foreground hover:text-brand">
-                    {quote.name}
-                  </Link>
-                  <p className="text-xs text-muted">{quote.email}</p>
-                </td>
-                <td className="px-4 py-3 text-muted">{quote.service || "—"}</td>
-                <td className="px-4 py-3 text-muted">{quote.quantity || "—"}</td>
-                <td className="px-4 py-3">
-                  <StatusBadge status={quote.status} />
-                </td>
-                <td className="px-4 py-3 text-muted">
-                  {new Date(quote.created_at).toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                    year: "numeric",
-                  })}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
     </div>
   );
 }
