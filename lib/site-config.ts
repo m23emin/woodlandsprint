@@ -1,5 +1,17 @@
 export const siteName = "Woodlands Print";
 
+/**
+ * Contact details for the WhatsApp / call float and links.
+ * ⚠️ Replace with your real numbers. Leave a value empty ("") to hide that button.
+ *  - phone:    E.164 for tel: link, e.g. "+12815550123"
+ *  - whatsapp: digits only for wa.me, e.g. "12815550123"
+ */
+export const siteContact = {
+  phone: "+19369003250",
+  whatsapp: "19369003250",
+  whatsappMessage: "Hi! I'd like a quote for custom printing.",
+};
+
 export const navLinks = [
   { label: "Custom Shirts", href: "/custom-shirts" },
   { label: "Apparel", href: "/blanks" },

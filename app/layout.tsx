@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Fraunces, Geist } from "next/font/google";
 import { GrainOverlay } from "./components/grain-overlay";
 import { ThemeProvider } from "./components/theme-provider";
+import { Analytics } from "./components/analytics";
+import { ContactFloat } from "./components/contact-float";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -61,7 +63,9 @@ export default function RootLayout({
         <ThemeProvider>
           <GrainOverlay />
           {children}
+          <ContactFloat />
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );

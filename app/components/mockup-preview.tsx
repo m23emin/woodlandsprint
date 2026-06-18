@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   garments,
@@ -9,6 +9,7 @@ import {
   isLightHex,
   VIEW_W,
   VIEW_H,
+  type Garment,
   type PrintArea,
 } from "@/lib/garments";
 import { saveQuotePrefill } from "@/lib/quote-prefill";
@@ -16,6 +17,33 @@ import { saveQuotePrefill } from "@/lib/quote-prefill";
 type Placement = "fullFront" | "leftChest";
 
 const MAX_BYTES = 20 * 1024 * 1024;
+
+function loadImage(src: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = src;
+  });
+}
+
+function garmentSvgString(garment: Garment, hex: string): string {
+  const stroke = isLightHex(hex) ? "#d8d8d8" : "rgba(0,0,0,0.18)";
+  const details = (garment.details ?? [])
+    .map((d) => `<path d="${d.d}" fill="rgba(0,0,0,${d.shade})"/>`)
+    .join("");
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${garment.viewBox}" width="${VIEW_W * 2}" height="${VIEW_H * 2}">
+    <defs><linearGradient id="shade" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.25)"/>
+      <stop offset="55%" stop-color="rgba(255,255,255,0)"/>
+      <stop offset="100%" stop-color="rgba(0,0,0,0.12)"/>
+    </linearGradient></defs>
+    <path d="${garment.body}" fill="${hex}" stroke="${stroke}" stroke-width="1.5"/>
+    <path d="${garment.body}" fill="url(#shade)" opacity="0.5"/>
+    ${details}
+  </svg>`;
+}
 
 export function MockupPreview() {
   const [garmentId, setGarmentId] = useState("tshirt");
@@ -32,6 +60,8 @@ export function MockupPreview() {
   const stageRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const dragging = useRef(false);
+  const router = useRouter();
+  const [busy, setBusy] = useState(false);
 
   const printPct = pctRect(area);
   const isDarkShirt = !isLightHex(color.hex);
@@ -81,11 +111,72 @@ export function MockupPreview() {
     };
   }, [area]);
 
-  function handleQuote() {
-    saveQuotePrefill({
-      service: "Custom T-Shirts",
-      blank: `${garment.label} — ${color.name}`,
-    });
+  const composeMockup = useCallback(async (): Promise<string | null> => {
+    const sf = 2;
+    const canvas = document.createElement("canvas");
+    canvas.width = VIEW_W * sf;
+    canvas.height = VIEW_H * sf;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return null;
+
+    const svg = garmentSvgString(garment, color.hex);
+    const garmentImg = await loadImage("data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg));
+    ctx.drawImage(garmentImg, 0, 0, canvas.width, canvas.height);
+
+    if (design) {
+      const d = await loadImage(design);
+      const ax = area.x * sf;
+      const ay = area.y * sf;
+      const aw = area.w * sf;
+      const ah = area.h * sf;
+      const dispW = scale * aw;
+      const dispH = dispW * (d.height / d.width);
+      const cx = ax + pos.x * aw;
+      const cy = ay + pos.y * ah;
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(ax, ay, aw, ah);
+      ctx.clip();
+      ctx.drawImage(d, cx - dispW / 2, cy - dispH / 2, dispW, dispH);
+      ctx.restore();
+    }
+
+    return canvas.toDataURL("image/png");
+  }, [garment, color, design, area, scale, pos]);
+
+  async function handleQuote() {
+    setBusy(true);
+    try {
+      const prefill: Record<string, string> = {
+        service: "Custom T-Shirts",
+        blank: `${garment.label} — ${color.name}`,
+      };
+      if (design) {
+        const dataUrl = await composeMockup();
+        if (dataUrl) {
+          prefill.mockupImage = dataUrl;
+          prefill.mockupName = `mockup-${garment.id}-${color.name.toLowerCase().replace(/\s+/g, "-")}.png`;
+        }
+      }
+      saveQuotePrefill(prefill);
+      router.push("/#quote");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function handleDownload() {
+    setBusy(true);
+    try {
+      const dataUrl = await composeMockup();
+      if (!dataUrl) return;
+      const a = document.createElement("a");
+      a.href = dataUrl;
+      a.download = `mockup-${garment.id}-${color.name.toLowerCase().replace(/\s+/g, "-")}.png`;
+      a.click();
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
@@ -261,13 +352,27 @@ export function MockupPreview() {
           </>
         )}
 
-        <Link
-          href="/#quote"
+        <button
+          type="button"
           onClick={handleQuote}
-          className="flex w-full items-center justify-center rounded-xl border border-brand bg-brand/5 px-6 py-3.5 text-sm font-semibold text-brand transition hover:bg-brand/10"
+          disabled={busy}
+          className="flex w-full items-center justify-center rounded-xl bg-accent px-6 py-3.5 text-sm font-semibold text-foreground transition hover:scale-[1.02] hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-70"
         >
-          Get a Quote for This →
-        </Link>
+          {busy ? "Preparing…" : "Get a Quote for This →"}
+        </button>
+        {design && (
+          <button
+            type="button"
+            onClick={handleDownload}
+            disabled={busy}
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-border px-6 py-3 text-sm font-semibold text-foreground transition hover:bg-brand/5 disabled:opacity-70"
+          >
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            Download mockup
+          </button>
+        )}
         <p className="text-center text-[11px] text-muted">
           Preview is for visualization — final placement is confirmed before printing.
         </p>

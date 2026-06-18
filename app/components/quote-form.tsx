@@ -19,6 +19,8 @@ export function QuoteForm() {
   const [service, setService] = useState("");
   const [quantity, setQuantity] = useState("");
   const [notes, setNotes] = useState("");
+  const [mockupDataUrl, setMockupDataUrl] = useState<string | null>(null);
+  const [mockupName, setMockupName] = useState<string | null>(null);
 
   useEffect(() => {
     const prefill = loadQuotePrefill();
@@ -36,6 +38,10 @@ export function QuoteForm() {
     }
     if (noteLines.length > 0) {
       setNotes((prev) => (prev ? `${prev}\n${noteLines.join("\n")}` : noteLines.join("\n")));
+    }
+    if (typeof prefill.mockupImage === "string" && prefill.mockupImage) {
+      setMockupDataUrl(prefill.mockupImage);
+      setMockupName(typeof prefill.mockupName === "string" ? prefill.mockupName : "mockup.png");
     }
     clearQuotePrefill();
   }, []);
@@ -181,7 +187,7 @@ export function QuoteForm() {
           </Field>
 
           <Field label="Upload Design" htmlFor="design">
-            <DesignUpload />
+            <DesignUpload initialDataUrl={mockupDataUrl} initialName={mockupName} />
           </Field>
 
           <Field label="Notes" htmlFor="notes">

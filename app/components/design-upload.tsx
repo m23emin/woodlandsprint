@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const MAX_BYTES = 10 * 1024 * 1024;
 const ACCEPT = "image/*,.pdf,.ai,.eps,.svg";
@@ -17,9 +17,17 @@ const artworkChecklist = [
 type DesignUploadProps = {
   name?: string;
   required?: boolean;
+  /** Preload a file (e.g. a generated mockup) by data URL */
+  initialDataUrl?: string | null;
+  initialName?: string | null;
 };
 
-export function DesignUpload({ name = "design", required = false }: DesignUploadProps) {
+export function DesignUpload({
+  name = "design",
+  required = false,
+  initialDataUrl = null,
+  initialName = null,
+}: DesignUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -61,6 +69,25 @@ export function DesignUpload({ name = "design", required = false }: DesignUpload
     },
     [clearPreview],
   );
+
+  useEffect(() => {
+    if (!initialDataUrl) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(initialDataUrl);
+        const blob = await res.blob();
+        if (cancelled) return;
+        const fileName = initialName || "mockup.png";
+        assignFile(new File([blob], fileName, { type: blob.type || "image/png" }));
+      } catch {
+        /* ignore — user can still upload manually */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [initialDataUrl, initialName, assignFile]);
 
   function onDrop(event: React.DragEvent) {
     event.preventDefault();

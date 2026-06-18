@@ -85,12 +85,14 @@ export async function POST(request: Request) {
 
   const text = rows.map(([label, value]) => `${label}: ${value}`).join("\n");
 
+  const subjectParts = [service || "Quote", quantity ? `(${quantity})` : "", `— ${name}`].filter(Boolean);
+
   const resend = new Resend(apiKey);
   const { error } = await resend.emails.send({
     from: fromEmail,
     to: toEmail,
     replyTo: email,
-    subject: `Quote request from ${name}`,
+    subject: `New quote: ${subjectParts.join(" ")}`,
     html,
     text,
     attachments,
