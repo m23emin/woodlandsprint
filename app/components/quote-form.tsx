@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
+import { useAccountProfile } from "@/app/components/account/account-link";
 import { clearQuotePrefill, loadQuotePrefill } from "@/lib/quote-prefill";
 import { DesignUpload } from "./design-upload";
 
@@ -16,11 +17,24 @@ type FormStatus = "idle" | "submitting" | "success" | "error";
 
 export function QuoteForm() {
   const [status, setStatus] = useState<FormStatus>("idle");
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [businessName, setBusinessName] = useState("");
   const [service, setService] = useState("");
   const [quantity, setQuantity] = useState("");
   const [notes, setNotes] = useState("");
   const [mockupDataUrl, setMockupDataUrl] = useState<string | null>(null);
   const [mockupName, setMockupName] = useState<string | null>(null);
+  const { profile, loaded: profileLoaded } = useAccountProfile();
+
+  useEffect(() => {
+    if (!profileLoaded || !profile) return;
+    setName((prev) => prev || profile.fullName);
+    setPhone((prev) => prev || profile.phone || "");
+    setEmail((prev) => prev || profile.email);
+    setBusinessName((prev) => prev || profile.businessName || "");
+  }, [profile, profileLoaded]);
 
   useEffect(() => {
     const prefill = loadQuotePrefill();
@@ -71,6 +85,10 @@ export function QuoteForm() {
 
       setStatus("success");
       form.reset();
+      setName(profile?.fullName ?? "");
+      setPhone(profile?.phone ?? "");
+      setEmail(profile?.email ?? "");
+      setBusinessName(profile?.businessName ?? "");
       setService("");
       setQuantity("");
       setNotes("");
@@ -91,6 +109,16 @@ export function QuoteForm() {
           <h3 className="text-xl font-semibold text-foreground">Quote request received</h3>
           <p className="mt-2 text-muted">
             Thanks for reaching out. We&apos;ll review your details and get back to you shortly.
+            {profile && (
+              <>
+                {" "}
+                Track this request in{" "}
+                <a href="/account" className="font-semibold text-brand hover:underline">
+                  your account
+                </a>
+                .
+              </>
+            )}
           </p>
           <button
             type="button"
@@ -102,6 +130,11 @@ export function QuoteForm() {
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-5">
+          {profile && (
+            <p className="rounded-lg bg-brand/10 px-4 py-3 text-sm text-brand">
+              Signed in as {profile.email}. Your profile details are pre-filled below.
+            </p>
+          )}
           <div className="grid gap-5 sm:grid-cols-2">
             <Field label="Name" htmlFor="name" required>
               <input
@@ -112,6 +145,8 @@ export function QuoteForm() {
                 required
                 className={inputClass}
                 placeholder="Your name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
               />
             </Field>
             <Field label="Phone" htmlFor="phone" required>
@@ -123,6 +158,8 @@ export function QuoteForm() {
                 required
                 className={inputClass}
                 placeholder="(281) 555-0123"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
               />
             </Field>
           </div>
@@ -136,6 +173,8 @@ export function QuoteForm() {
               required
               className={inputClass}
               placeholder="you@email.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </Field>
 
@@ -147,6 +186,8 @@ export function QuoteForm() {
               autoComplete="organization"
               className={inputClass}
               placeholder="Optional — for bulk or business orders"
+              value={businessName}
+              onChange={(e) => setBusinessName(e.target.value)}
             />
           </Field>
 

@@ -4,10 +4,20 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { navLinks } from "@/lib/site-config";
+import { isBrowserAuthConfigured } from "@/lib/supabase/client";
 
 export function MobileNav({ variant = "dark" }: { variant?: "dark" | "light" }) {
   const [open, setOpen] = useState(false);
+  const [signedIn, setSignedIn] = useState(false);
   const isDark = variant === "dark";
+
+  useEffect(() => {
+    if (!isBrowserAuthConfigured()) return;
+    fetch("/api/account/me")
+      .then((res) => res.json())
+      .then((data) => setSignedIn(Boolean(data.authenticated)))
+      .catch(() => setSignedIn(false));
+  }, [open]);
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -81,6 +91,15 @@ export function MobileNav({ variant = "dark" }: { variant?: "dark" | "light" }) 
                     {link.label}
                   </Link>
                 ))}
+                {isBrowserAuthConfigured() && (
+                  <Link
+                    href={signedIn ? "/account" : "/account/login"}
+                    onClick={() => setOpen(false)}
+                    className="rounded-xl px-4 py-3.5 text-base font-medium text-foreground transition hover:bg-brand/10 hover:text-brand"
+                  >
+                    {signedIn ? "My Account" : "Sign in"}
+                  </Link>
+                )}
               </div>
               <div className="border-t border-border p-4">
                 <Link

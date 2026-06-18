@@ -23,6 +23,7 @@ export type QuoteRecord = {
   design_filename: string | null;
   status: QuoteStatus;
   internal_notes: string | null;
+  user_id: string | null;
 };
 
 export const quoteStatusOptions: { value: QuoteStatus; label: string; color: string }[] = [

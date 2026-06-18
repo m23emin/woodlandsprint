@@ -13,6 +13,7 @@ export const siteContact = {
 };
 
 export const navLinks = [
+  { label: "DTF Transfers", href: "/dtf-transfers" },
   { label: "Custom Shirts", href: "/custom-shirts" },
   { label: "Apparel", href: "/blanks" },
   { label: "Design Preview", href: "/mockup" },
@@ -94,6 +95,7 @@ export const footerLinks = {
     { label: "Events & Bulk", href: "/event-bulk" },
     { label: "Pricing", href: "/pricing" },
     { label: "Get a Quote", href: "/#quote" },
+    { label: "My Account", href: "/account" },
   ],
   resources: [
     { label: "Artwork Requirements", href: "/artwork-requirements" },

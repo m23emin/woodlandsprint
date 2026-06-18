@@ -19,10 +19,10 @@ import { faqItems, galleryItems, pricingTiers } from "@/lib/site-config";
 
 const services = [
   {
-    title: "DTF Gang Sheets",
+    title: "DTF Transfers",
     href: "/dtf-transfers",
     description:
-      "High-quality direct-to-film transfers with vibrant color and durable wear. Perfect for one-offs or production runs.",
+      "Full-color direct-to-film transfers and gang sheets with vibrant color and durable wear. Perfect for one-offs or production runs.",
     icon: (
       <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -185,19 +185,19 @@ export default function Home() {
         </section>
 
         {/* Trust / same-day strip */}
-        <section className="border-b border-border bg-surface px-4 py-4 sm:px-6">
-          <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-8 gap-y-2 text-center text-sm">
+        <section className="border-y border-brand-dark/20 bg-brand-dark px-4 py-5 text-white sm:px-6">
+          <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-10 gap-y-3 text-center text-sm sm:text-base">
             {[
               "Same-day production on orders before noon",
               "No minimums",
               "Local pickup across North Houston",
               "Free artwork review",
             ].map((item) => (
-              <span key={item} className="inline-flex items-center gap-2 text-muted">
-                <svg className="h-4 w-4 shrink-0 text-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <span key={item} className="inline-flex items-center gap-2">
+                <svg className="h-4 w-4 shrink-0 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
-                <span className="font-medium text-foreground">{item}</span>
+                <span className="font-semibold">{item}</span>
               </span>
             ))}
           </div>
@@ -226,7 +226,7 @@ export default function Home() {
                       </div>
                       <h3 className="font-display text-lg font-semibold text-foreground">{service.title}</h3>
                       <p className="mt-2 text-sm leading-relaxed text-muted">{service.description}</p>
-                      <span className="mt-4 inline-flex items-center text-sm font-semibold text-brand opacity-0 transition group-hover:opacity-100">
+                      <span className="mt-auto pt-4 inline-flex items-center text-sm font-semibold text-brand transition group-hover:translate-x-0.5">
                         Learn more →
                       </span>
                     </Link>

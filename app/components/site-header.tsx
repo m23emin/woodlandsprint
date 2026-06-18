@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Logo } from "./logo";
+import { AccountLink } from "./account/account-link";
 import { MobileNav } from "./mobile-nav";
 import { ThemeToggle } from "./theme-toggle";
 import { navLinks } from "@/lib/site-config";
@@ -33,6 +34,7 @@ export function SiteHeader({ variant = "dark" }: { variant?: "dark" | "light" })
         </nav>
 
         <div className="flex items-center gap-2">
+          <AccountLink variant={isDark ? "dark" : "light"} />
           <ThemeToggle variant={isDark ? "dark" : "light"} />
           <Link
             href="/#quote"

@@ -1,6 +1,7 @@
 import { Resend } from "resend";
 import { NextResponse } from "next/server";
 import { saveQuoteRequest } from "@/lib/quotes";
+import { tryCreateClient } from "@/lib/supabase/server";
 
 function getString(value: FormDataEntryValue | null): string {
   return typeof value === "string" ? value.trim() : "";
@@ -36,6 +37,15 @@ export async function POST(request: Request) {
   const designEntry = formData.get("design");
   const design = designEntry instanceof File && designEntry.size > 0 ? designEntry : null;
 
+  let userId: string | null = null;
+  const supabase = await tryCreateClient();
+  if (supabase) {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    userId = user?.id ?? null;
+  }
+
   const dbResult = await saveQuoteRequest({
     name,
     phone,
@@ -46,6 +56,7 @@ export async function POST(request: Request) {
     needBy,
     notes,
     design,
+    userId,
   });
 
   const attachments = design

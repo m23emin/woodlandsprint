@@ -11,6 +11,7 @@ export type SaveQuoteInput = {
   needBy?: string;
   notes?: string;
   design?: File | null;
+  userId?: string | null;
 };
 
 export async function saveQuoteRequest(input: SaveQuoteInput) {
@@ -28,6 +29,7 @@ export async function saveQuoteRequest(input: SaveQuoteInput) {
       quantity: input.quantity || null,
       need_by: input.needBy || null,
       notes: input.notes || null,
+      user_id: input.userId || null,
       status: "new",
       internal_notes: null,
       design_path: null,
