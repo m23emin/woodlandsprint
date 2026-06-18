@@ -1,3 +1,4 @@
+import { GoogleReviews } from "./google-reviews";
 import { FadeIn, StaggerGrid, StaggerItem } from "./motion/fade-in";
 import { SectionHeading } from "./section-heading";
 import { testimonials, trustCategories } from "@/lib/site-config";
@@ -46,6 +47,10 @@ export function Testimonials() {
             </StaggerItem>
           ))}
         </StaggerGrid>
+
+        <FadeIn delay={0.12}>
+          <GoogleReviews />
+        </FadeIn>
 
         <FadeIn delay={0.15} className="mt-12 overflow-hidden">
           <p className="mb-4 text-center text-xs font-semibold uppercase tracking-wider text-muted">

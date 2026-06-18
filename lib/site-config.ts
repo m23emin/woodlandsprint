@@ -6,6 +6,18 @@ export const siteName = "Woodlands Print";
  *  - phone:    E.164 for tel: link, e.g. "+12815550123"
  *  - whatsapp: digits only for wa.me, e.g. "12815550123"
  */
+/**
+ * Google Business reviews & maps.
+ * profileUrl: Google Business → Share → copy link (e.g. https://g.page/r/xxx/review)
+ * mapsEmbedUrl: Google Maps → your business → Share → Embed a map → copy src URL
+ * mapsLinkUrl: Direct link to open in Google Maps app
+ */
+export const googleReviews = {
+  profileUrl: "",
+  mapsEmbedUrl: "",
+  mapsLinkUrl: "https://www.google.com/maps/search/?api=1&query=Woodlands+Print+The+Woodlands+TX",
+};
+
 export const siteContact = {
   phone: "+19369003250",
   whatsapp: "19369003250",

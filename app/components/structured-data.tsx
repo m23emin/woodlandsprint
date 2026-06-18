@@ -1,4 +1,4 @@
-import { siteContact, siteName } from "@/lib/site-config";
+import { faqItems, siteContact, siteName } from "@/lib/site-config";
 
 /**
  * LocalBusiness + WebSite JSON-LD for rich results and local SEO.
@@ -52,6 +52,18 @@ export function StructuredData() {
         url,
         name: siteName,
         publisher: { "@id": `${url}/#business` },
+      },
+      {
+        "@type": "FAQPage",
+        "@id": `${url}/#faq`,
+        mainEntity: faqItems.map((item) => ({
+          "@type": "Question",
+          name: item.q,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: item.a,
+          },
+        })),
       },
     ],
   };

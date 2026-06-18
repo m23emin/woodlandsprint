@@ -2,8 +2,17 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { useAccountProfile } from "@/app/components/account/account-link";
+import { useCart } from "@/app/components/cart/cart-provider";
 import { clearQuotePrefill, loadQuotePrefill } from "@/lib/quote-prefill";
 import { DesignUpload } from "./design-upload";
+import {
+  emptySizeBreakdown,
+  formatSizeBreakdown,
+  QuoteSizeBreakdown,
+  showSizeBreakdown,
+  sizeBreakdownTotal,
+  type SizeBreakdown,
+} from "./quote-size-breakdown";
 
 const serviceOptions = [
   "DTF Gang Sheets",
@@ -26,7 +35,9 @@ export function QuoteForm() {
   const [notes, setNotes] = useState("");
   const [mockupDataUrl, setMockupDataUrl] = useState<string | null>(null);
   const [mockupName, setMockupName] = useState<string | null>(null);
+  const [sizes, setSizes] = useState<SizeBreakdown>(() => emptySizeBreakdown());
   const { profile, loaded: profileLoaded } = useAccountProfile();
+  const { clearCart } = useCart();
 
   useEffect(() => {
     if (!profileLoaded || !profile) return;
@@ -79,6 +90,16 @@ export function QuoteForm() {
       return;
     }
 
+    const sizeText = formatSizeBreakdown(sizes);
+    const sizeTotal = sizeBreakdownTotal(sizes);
+    if (sizeText) {
+      const mergedNotes = notes ? `${notes}\n\n${sizeText}` : sizeText;
+      formData.set("notes", mergedNotes);
+    }
+    if (sizeTotal > 0 && !formData.get("quantity")) {
+      formData.set("quantity", `${sizeTotal} shirts`);
+    }
+
     try {
       const response = await fetch("/api/quote", {
         method: "POST",
@@ -90,6 +111,7 @@ export function QuoteForm() {
         return;
       }
 
+      clearCart();
       setStatus("success");
       form.reset();
       setName(profile?.fullName ?? "");
@@ -99,6 +121,9 @@ export function QuoteForm() {
       setService("");
       setQuantity("");
       setNotes("");
+      setSizes(emptySizeBreakdown());
+      setMockupDataUrl(null);
+      setMockupName(null);
     } catch {
       setStatus("error");
     }
@@ -224,12 +249,20 @@ export function QuoteForm() {
                 name="quantity"
                 type="text"
                 className={inputClass}
-                placeholder="e.g. 24 shirts"
+                placeholder={
+                  showSizeBreakdown(service) && sizeBreakdownTotal(sizes) > 0
+                    ? `${sizeBreakdownTotal(sizes)} shirts (from sizes below)`
+                    : "e.g. 24 shirts"
+                }
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
               />
             </Field>
           </div>
+
+          {showSizeBreakdown(service) && (
+            <QuoteSizeBreakdown sizes={sizes} onChange={setSizes} />
+          )}
 
           <Field label="Need By Date" htmlFor="needBy">
             <input id="needBy" name="needBy" type="date" className={inputClass} />
