@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { customerQuoteColumns, type CustomerProfile } from "@/lib/account";
+import { mapAuthErrorMessage } from "@/lib/auth-errors";
 import { linkQuotesToUserByEmail } from "@/lib/quotes";
 import { createClient, tryCreateClient } from "@/lib/supabase/server";
 import { isSupabaseAuthConfigured } from "@/lib/supabase/env";
@@ -43,7 +44,7 @@ export async function signUpAction(_prev: unknown, formData: FormData) {
   });
 
   if (error) {
-    return { error: error.message };
+    return { error: mapAuthErrorMessage(error.message) };
   }
 
   if (data.session && data.user) {
@@ -234,7 +235,7 @@ export async function requestPasswordResetAction(_prev: unknown, formData: FormD
   });
 
   if (error) {
-    return { error: error.message };
+    return { error: mapAuthErrorMessage(error.message) };
   }
 
   return { ok: true as const };
@@ -267,7 +268,7 @@ export async function updatePasswordAction(_prev: unknown, formData: FormData) {
 
   const { error } = await supabase.auth.updateUser({ password });
   if (error) {
-    return { error: error.message };
+    return { error: mapAuthErrorMessage(error.message) };
   }
 
   redirect("/account");

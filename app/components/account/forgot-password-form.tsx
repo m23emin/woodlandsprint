@@ -13,7 +13,10 @@ export function ForgotPasswordForm() {
       <div className="rounded-2xl border border-border bg-surface p-6 text-center shadow-sm sm:p-8">
         <p className="text-lg font-semibold text-foreground">Check your email</p>
         <p className="mt-2 text-sm text-muted">
-          If an account exists for that address, we sent a password reset link.
+          If an account exists for that address, we sent a password reset link. Check your spam folder too.
+        </p>
+        <p className="mt-3 text-xs text-muted">
+          Didn&apos;t get it? Wait an hour before requesting again — too many attempts triggers a temporary email limit.
         </p>
         <Link href="/account/login" className="mt-4 inline-flex text-sm font-semibold text-brand hover:underline">
           Back to sign in

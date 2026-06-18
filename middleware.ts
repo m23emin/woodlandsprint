@@ -10,6 +10,13 @@ const PUBLIC_ACCOUNT_PATHS = new Set([
   "/account/reset-password",
 ]);
 
+/** Logged-in users are redirected away from these only (not reset-password). */
+const REDIRECT_IF_LOGGED_IN = new Set([
+  "/account/login",
+  "/account/register",
+  "/account/forgot-password",
+]);
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -33,7 +40,7 @@ export async function middleware(request: NextRequest) {
           return NextResponse.redirect(loginUrl);
         }
 
-        if (user && isPublic) {
+        if (user && REDIRECT_IF_LOGGED_IN.has(pathname)) {
           return NextResponse.redirect(new URL("/account", request.url));
         }
       }

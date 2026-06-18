@@ -59,7 +59,7 @@ export function MobileNav({ variant = "dark" }: { variant?: "dark" | "light" }) 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
+              className="fixed inset-0 z-50 bg-black/70"
               onClick={() => setOpen(false)}
             />
             <motion.nav
@@ -67,9 +67,10 @@ export function MobileNav({ variant = "dark" }: { variant?: "dark" | "light" }) 
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 28, stiffness: 320 }}
-              className="fixed right-0 top-0 z-50 flex h-full w-[min(100%,320px)] flex-col border-l border-border bg-surface shadow-2xl"
+              className="fixed right-0 top-0 z-50 flex h-full w-[min(100%,320px)] flex-col border-l border-border bg-background shadow-2xl"
+              style={{ backgroundColor: "var(--background)" }}
             >
-              <div className="flex items-center justify-between border-b border-border px-5 py-4">
+              <div className="flex items-center justify-between border-b border-border bg-background px-5 py-4">
                 <span className="font-display text-lg font-semibold text-foreground">Menu</span>
                 <button
                   type="button"
@@ -82,13 +83,13 @@ export function MobileNav({ variant = "dark" }: { variant?: "dark" | "light" }) 
                   </svg>
                 </button>
               </div>
-              <div className="flex flex-1 flex-col gap-1 p-4">
+              <div className="flex flex-1 flex-col gap-1 bg-background p-4">
                 {navLinks.map((link) => (
                   <Link
                     key={link.href}
                     href={link.href}
                     onClick={() => setOpen(false)}
-                    className="rounded-xl px-4 py-3.5 text-base font-medium text-foreground transition hover:bg-brand/10 hover:text-brand"
+                    className="rounded-xl px-4 py-3.5 text-base font-semibold text-foreground transition hover:bg-brand/10 hover:text-brand"
                   >
                     {link.label}
                   </Link>
@@ -97,7 +98,7 @@ export function MobileNav({ variant = "dark" }: { variant?: "dark" | "light" }) 
                   <Link
                     href={signedIn ? "/account" : "/account/login"}
                     onClick={() => setOpen(false)}
-                    className="rounded-xl px-4 py-3.5 text-base font-medium text-foreground transition hover:bg-brand/10 hover:text-brand"
+                    className="rounded-xl px-4 py-3.5 text-base font-semibold text-foreground transition hover:bg-brand/10 hover:text-brand"
                   >
                     {signedIn ? "My Account" : "Sign in"}
                   </Link>
@@ -105,12 +106,12 @@ export function MobileNav({ variant = "dark" }: { variant?: "dark" | "light" }) 
                 <Link
                   href="/cart"
                   onClick={() => setOpen(false)}
-                  className="rounded-xl px-4 py-3.5 text-base font-medium text-foreground transition hover:bg-brand/10 hover:text-brand"
+                  className="rounded-xl px-4 py-3.5 text-base font-semibold text-foreground transition hover:bg-brand/10 hover:text-brand"
                 >
                   Cart{cartCount > 0 ? ` (${cartCount})` : ""}
                 </Link>
               </div>
-              <div className="border-t border-border p-4">
+              <div className="border-t border-border bg-background p-4">
                 <Link
                   href="/#quote"
                   onClick={() => setOpen(false)}
