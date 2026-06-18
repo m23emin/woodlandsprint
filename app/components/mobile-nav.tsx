@@ -5,10 +5,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { navLinks } from "@/lib/site-config";
 import { isBrowserAuthConfigured } from "@/lib/supabase/client";
+import { useCart } from "@/app/components/cart/cart-provider";
 
 export function MobileNav({ variant = "dark" }: { variant?: "dark" | "light" }) {
   const [open, setOpen] = useState(false);
   const [signedIn, setSignedIn] = useState(false);
+  const { count: cartCount } = useCart();
   const isDark = variant === "dark";
 
   useEffect(() => {
@@ -100,6 +102,13 @@ export function MobileNav({ variant = "dark" }: { variant?: "dark" | "light" }) 
                     {signedIn ? "My Account" : "Sign in"}
                   </Link>
                 )}
+                <Link
+                  href="/cart"
+                  onClick={() => setOpen(false)}
+                  className="rounded-xl px-4 py-3.5 text-base font-medium text-foreground transition hover:bg-brand/10 hover:text-brand"
+                >
+                  Cart{cartCount > 0 ? ` (${cartCount})` : ""}
+                </Link>
               </div>
               <div className="border-t border-border p-4">
                 <Link

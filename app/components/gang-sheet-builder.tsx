@@ -9,6 +9,8 @@ import {
   type GangSheetSize,
 } from "@/lib/pricing-calculator";
 import { saveQuotePrefill } from "@/lib/quote-prefill";
+import { saveCartAttachment } from "@/lib/cart-attachments";
+import { useCart } from "@/app/components/cart/cart-provider";
 import { GangSheetCanvas, type CanvasHandle } from "./gang-sheet-canvas";
 
 const ACCEPT = "image/png,image/jpeg,image/webp,.pdf";
@@ -21,8 +23,10 @@ export function GangSheetBuilder() {
   const [hasSelection, setHasSelection] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [uploadCount, setUploadCount] = useState(0);
+  const [cartMsg, setCartMsg] = useState<string | null>(null);
   const canvasRef = useRef<CanvasHandle>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { addItem } = useCart();
 
   const selectedSize = gangSheetSizes.find((s) => s.id === sizeId) as GangSheetSize;
   const unitPrice = useMemo(() => gangSheetPrice(sizeId, qty), [sizeId, qty]);
@@ -61,6 +65,29 @@ export function GangSheetBuilder() {
     }
 
     saveQuotePrefill(prefill);
+  }
+
+  function handleAddToCart() {
+    const attachmentId = crypto.randomUUID();
+    const dataUrl = canvasRef.current?.exportPNG();
+    if (dataUrl) saveCartAttachment(attachmentId, dataUrl);
+
+    const unitWithRush = Math.round(unitPrice * rushMultiplier * 100) / 100;
+
+    addItem({
+      id: crypto.randomUUID(),
+      type: "gang-sheet",
+      title: `DTF Gang Sheet — ${selectedSize.label}`,
+      subtitle: selectedSize.dimensions,
+      quantity: qty,
+      unitPrice: unitWithRush,
+      totalPrice: total,
+      meta: { rush: rush ? "yes" : "no", size: sizeId },
+      attachmentId: dataUrl ? attachmentId : undefined,
+    });
+
+    setCartMsg("Added to cart!");
+    setTimeout(() => setCartMsg(null), 2500);
   }
 
   return (
@@ -278,12 +305,29 @@ export function GangSheetBuilder() {
             </p>
           )}
 
+          {cartMsg && (
+            <p className="rounded-lg bg-brand/10 px-3 py-2 text-center text-xs font-semibold text-brand">{cartMsg}</p>
+          )}
+
           <Link
             href="/#quote"
             onClick={handleGetQuote}
-            className="mt-4 flex w-full items-center justify-center rounded-xl bg-accent px-6 py-3.5 text-sm font-semibold text-foreground transition hover:scale-[1.02] hover:bg-accent-hover"
+            className="flex w-full items-center justify-center rounded-xl bg-accent px-6 py-3.5 text-sm font-semibold text-foreground transition hover:scale-[1.02] hover:bg-accent-hover"
           >
             Get Exact Quote →
+          </Link>
+          <button
+            type="button"
+            onClick={handleAddToCart}
+            className="flex w-full items-center justify-center rounded-xl border border-border bg-background px-6 py-3 text-sm font-semibold text-foreground transition hover:border-brand/30 hover:bg-brand/5"
+          >
+            Add to Cart
+          </button>
+          <Link
+            href="/cart"
+            className="block text-center text-xs font-medium text-brand hover:underline"
+          >
+            View cart →
           </Link>
         </div>
 

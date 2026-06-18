@@ -14,6 +14,7 @@ import {
   type BlankProduct,
 } from "@/lib/blank-catalog";
 import { saveQuotePrefill } from "@/lib/quote-prefill";
+import { useCart } from "@/app/components/cart/cart-provider";
 
 const categories = Object.keys(categoryLabels) as BlankCategory[];
 
@@ -158,12 +159,36 @@ function ProductCard({ product, onOpen }: { product: BlankProduct; onOpen: () =>
 }
 
 function ProductModal({ product, onClose }: { product: BlankProduct; onClose: () => void }) {
+  const { addItem } = useCart();
+  const [qty, setQty] = useState(12);
+  const [size, setSize] = useState(product.sizes[0]?.size ?? "M");
+  const [color, setColor] = useState(product.colors[0] ?? "");
+  const [cartMsg, setCartMsg] = useState<string | null>(null);
+
+  const sizeCost = product.sizes.find((s) => s.size === size)?.cost ?? product.sizes[0]?.cost ?? 0;
+  const unitPrice = blankRetail(sizeCost);
+
   function handleQuote() {
     saveQuotePrefill({
       service: "Custom T-Shirts",
-      quantity: "12",
-      blank: `${product.brand} ${product.name}`,
+      quantity: String(qty),
+      blank: `${product.brand} ${product.name} — ${color}, ${size}`,
     });
+  }
+
+  function handleAddToCart() {
+    addItem({
+      id: crypto.randomUUID(),
+      type: "blank",
+      title: `${product.brand} ${product.name}`,
+      subtitle: `${color} · size ${size}`,
+      quantity: qty,
+      unitPrice,
+      totalPrice: Math.round(unitPrice * qty * 100) / 100,
+      meta: { productId: product.id, color, size },
+    });
+    setCartMsg("Added to cart!");
+    setTimeout(() => setCartMsg(null), 2500);
   }
 
   return (
@@ -213,22 +238,65 @@ function ProductModal({ product, onClose }: { product: BlankProduct; onClose: ()
             </p>
             <div className="mt-2 flex flex-wrap gap-1.5">
               {product.colors.map((c) => (
-                <span
+                <button
                   key={c}
+                  type="button"
                   title={c}
-                  className={`h-6 w-6 rounded-full ${isLightSwatch(c) ? "ring-1 ring-border" : ""}`}
+                  onClick={() => setColor(c)}
+                  className={`h-6 w-6 rounded-full transition ${color === c ? "ring-2 ring-brand ring-offset-2" : ""} ${isLightSwatch(c) ? "ring-1 ring-border" : ""}`}
                   style={{ backgroundColor: hexForColor(c) }}
                 />
               ))}
             </div>
 
-            <Link
-              href="/#quote"
-              onClick={handleQuote}
-              className="mt-6 flex w-full items-center justify-center rounded-xl bg-accent px-6 py-3.5 text-sm font-semibold text-foreground transition hover:scale-[1.02] hover:bg-accent-hover"
-            >
-              Get a Quote for This Blank →
-            </Link>
+            <div className="mt-5 grid grid-cols-2 gap-3">
+              <label className="block text-sm">
+                <span className="mb-1 block text-xs font-medium text-muted">Size</span>
+                <select
+                  value={size}
+                  onChange={(e) => setSize(e.target.value)}
+                  className="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-brand"
+                >
+                  {product.sizes.map((s) => (
+                    <option key={s.size} value={s.size}>
+                      {s.size} — ${blankRetail(s.cost).toFixed(2)}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="block text-sm">
+                <span className="mb-1 block text-xs font-medium text-muted">Quantity</span>
+                <input
+                  type="number"
+                  min={1}
+                  max={999}
+                  value={qty}
+                  onChange={(e) => setQty(Math.max(1, Number(e.target.value) || 1))}
+                  className="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-brand"
+                />
+              </label>
+            </div>
+
+            {cartMsg && (
+              <p className="mt-4 rounded-lg bg-brand/10 px-3 py-2 text-center text-xs font-semibold text-brand">{cartMsg}</p>
+            )}
+
+            <div className="mt-4 grid gap-2">
+              <button
+                type="button"
+                onClick={handleAddToCart}
+                className="flex w-full items-center justify-center rounded-xl border border-brand bg-brand/5 px-6 py-3 text-sm font-semibold text-brand transition hover:bg-brand/10"
+              >
+                Add to Cart
+              </button>
+              <Link
+                href="/#quote"
+                onClick={handleQuote}
+                className="flex w-full items-center justify-center rounded-xl bg-accent px-6 py-3.5 text-sm font-semibold text-foreground transition hover:scale-[1.02] hover:bg-accent-hover"
+              >
+                Get a Quote for This Blank →
+              </Link>
+            </div>
           </div>
         </div>
       </div>

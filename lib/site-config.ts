@@ -116,6 +116,7 @@ export const footerLinks = {
     { label: "Contact", href: "/contact" },
     { label: "Get a Quote", href: "/#quote" },
     { label: "My Account", href: "/account" },
+    { label: "Cart", href: "/cart" },
   ],
   resources: [
     { label: "Artwork Requirements", href: "/artwork-requirements" },

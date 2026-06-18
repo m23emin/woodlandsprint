@@ -3,6 +3,7 @@ import { Fraunces, Geist } from "next/font/google";
 import { GrainOverlay } from "./components/grain-overlay";
 import { ThemeProvider } from "./components/theme-provider";
 import { Analytics } from "./components/analytics";
+import { CartRoot } from "./components/cart/cart-root";
 import { ContactFloat } from "./components/contact-float";
 import { StructuredData } from "./components/structured-data";
 import "./globals.css";
@@ -62,9 +63,11 @@ export default function RootLayout({
     <html lang="en" className={`${geistSans.variable} ${fraunces.variable} h-full scroll-smooth antialiased`}>
       <body className="min-h-full bg-background text-foreground">
         <ThemeProvider>
-          <GrainOverlay />
-          {children}
-          <ContactFloat />
+          <CartRoot>
+            <GrainOverlay />
+            {children}
+            <ContactFloat />
+          </CartRoot>
         </ThemeProvider>
         <Analytics />
         <StructuredData />
