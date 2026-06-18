@@ -20,6 +20,7 @@ import { faqItems, galleryItems, pricingTiers } from "@/lib/site-config";
 const services = [
   {
     title: "DTF Gang Sheets",
+    href: "/dtf-transfers",
     description:
       "High-quality direct-to-film transfers with vibrant color and durable wear. Perfect for one-offs or production runs.",
     icon: (
@@ -30,6 +31,7 @@ const services = [
   },
   {
     title: "Custom T-Shirts",
+    href: "/custom-shirts",
     description:
       "Soft, premium blanks with crisp prints for teams, brands, gifts, and everyday wear that looks and feels great.",
     icon: (
@@ -40,6 +42,7 @@ const services = [
   },
   {
     title: "Business Apparel",
+    href: "/business-printing",
     description:
       "Polos, hoodies, and uniforms that keep your team looking professional with consistent branding.",
     icon: (
@@ -50,6 +53,7 @@ const services = [
   },
   {
     title: "Event & Bulk Orders",
+    href: "/event-bulk",
     description:
       "Race shirts, school events, reunions, and large runs handled with reliable timelines and competitive pricing.",
     icon: (
@@ -180,7 +184,24 @@ export default function Home() {
           </div>
         </section>
 
-        <SectionDivider variant="dark" />
+        {/* Trust / same-day strip */}
+        <section className="border-b border-border bg-surface px-4 py-4 sm:px-6">
+          <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-8 gap-y-2 text-center text-sm">
+            {[
+              "Same-day production on orders before noon",
+              "No minimums",
+              "Local pickup across North Houston",
+              "Free artwork review",
+            ].map((item) => (
+              <span key={item} className="inline-flex items-center gap-2 text-muted">
+                <svg className="h-4 w-4 shrink-0 text-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+                <span className="font-medium text-foreground">{item}</span>
+              </span>
+            ))}
+          </div>
+        </section>
 
         {/* Services */}
         <section id="services" className="section-soft-top px-4 py-16 sm:px-6 sm:py-20">
@@ -196,13 +217,19 @@ export default function Home() {
               {services.map((service) => (
                 <StaggerItem key={service.title}>
                   <TiltCard className="h-full rounded-2xl">
-                    <article className="group h-full rounded-2xl border border-border bg-surface p-6 shadow-sm transition hover:border-brand/30 hover:shadow-lg">
+                    <Link
+                      href={service.href}
+                      className="group flex h-full flex-col rounded-2xl border border-border bg-surface p-6 shadow-sm transition hover:border-brand/30 hover:shadow-lg"
+                    >
                       <div className="mb-4 inline-flex rounded-xl bg-brand/10 p-3 text-brand transition group-hover:bg-brand group-hover:text-white">
                         {service.icon}
                       </div>
                       <h3 className="font-display text-lg font-semibold text-foreground">{service.title}</h3>
                       <p className="mt-2 text-sm leading-relaxed text-muted">{service.description}</p>
-                    </article>
+                      <span className="mt-4 inline-flex items-center text-sm font-semibold text-brand opacity-0 transition group-hover:opacity-100">
+                        Learn more →
+                      </span>
+                    </Link>
                   </TiltCard>
                 </StaggerItem>
               ))}

@@ -4,6 +4,7 @@ import { GrainOverlay } from "./components/grain-overlay";
 import { ThemeProvider } from "./components/theme-provider";
 import { Analytics } from "./components/analytics";
 import { ContactFloat } from "./components/contact-float";
+import { StructuredData } from "./components/structured-data";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -66,6 +67,7 @@ export default function RootLayout({
           <ContactFloat />
         </ThemeProvider>
         <Analytics />
+        <StructuredData />
       </body>
     </html>
   );
