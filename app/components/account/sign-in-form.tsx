@@ -28,7 +28,13 @@ export function SignInForm() {
     <div className="rounded-2xl border border-border bg-surface p-6 shadow-sm sm:p-8">
       {registered && (
         <p className="mb-4 rounded-lg bg-brand/10 px-4 py-3 text-sm text-brand">
-          Account created. Check your email if confirmation is required, then sign in.
+          Account created. Check your email to confirm, then sign in.
+        </p>
+      )}
+
+      {searchParams.get("error") === "confirmation" && (
+        <p className="mb-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700 dark:bg-red-950/40 dark:text-red-300">
+          Email confirmation link expired or invalid. Try signing in, or register again.
         </p>
       )}
 
