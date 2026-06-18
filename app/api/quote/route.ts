@@ -1,5 +1,6 @@
 import { Resend } from "resend";
 import { NextResponse } from "next/server";
+import { buildCustomerQuoteEmail } from "@/lib/quote-emails";
 import { saveQuoteRequest } from "@/lib/quotes";
 import { tryCreateClient } from "@/lib/supabase/server";
 
@@ -112,6 +113,29 @@ export async function POST(request: Request) {
   if (error) {
     console.error("Resend error:", error);
     return NextResponse.json({ error: "Failed to send quote request." }, { status: 502 });
+  }
+
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.woodlandsprint.com";
+  const customerEmail = buildCustomerQuoteEmail({
+    name,
+    email,
+    service,
+    quantity,
+    siteUrl,
+    hasAccount: Boolean(userId),
+  });
+
+  const { error: customerError } = await resend.emails.send({
+    from: fromEmail,
+    to: email,
+    replyTo: toEmail,
+    subject: customerEmail.subject,
+    html: customerEmail.html,
+    text: customerEmail.text,
+  });
+
+  if (customerError) {
+    console.error("Customer confirmation email error:", customerError);
   }
 
   return NextResponse.json({ ok: true, quoteId: dbResult.saved ? dbResult.id : null });

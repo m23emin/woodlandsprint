@@ -12,6 +12,24 @@ export const siteContact = {
   whatsappMessage: "Hi! I'd like a quote for custom printing.",
 };
 
+/** Pickup & hours — edit for your shop */
+export const sitePickup = {
+  area: "North Houston — The Woodlands, Spring, Conroe & nearby",
+  hours: "Mon–Fri 9am–6pm · Sat by appointment",
+  pickupNote: "Local pickup available. Exact pickup location is sent with your order confirmation.",
+  mapsQuery: "The Woodlands, TX",
+};
+
+export const serviceAreas = [
+  "The Woodlands",
+  "Spring",
+  "Conroe",
+  "Tomball",
+  "Magnolia",
+  "Houston",
+  "Richmond",
+] as const;
+
 export const navLinks = [
   { label: "DTF Transfers", href: "/dtf-transfers" },
   { label: "Custom Shirts", href: "/custom-shirts" },
@@ -19,6 +37,7 @@ export const navLinks = [
   { label: "Design Preview", href: "/mockup" },
   { label: "Gang Sheet", href: "/gang-sheet" },
   { label: "Pricing", href: "/pricing" },
+  { label: "Contact", href: "/contact" },
   { label: "Quote", href: "/#quote" },
 ] as const;
 
@@ -94,6 +113,7 @@ export const footerLinks = {
     { label: "Gang Sheet Builder", href: "/gang-sheet" },
     { label: "Events & Bulk", href: "/event-bulk" },
     { label: "Pricing", href: "/pricing" },
+    { label: "Contact", href: "/contact" },
     { label: "Get a Quote", href: "/#quote" },
     { label: "My Account", href: "/account" },
   ],

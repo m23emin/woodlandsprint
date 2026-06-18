@@ -47,6 +47,9 @@ export function QuoteForm() {
     if (typeof prefill.blank === "string" && prefill.blank) {
       noteLines.push(`Blank: ${prefill.blank}`);
     }
+    if (typeof prefill.gangSheetSize === "string" && prefill.gangSheetSize) {
+      noteLines.push(`Gang sheet size: ${prefill.gangSheetSize}`);
+    }
     if (prefill.estimatedTotal && Number(prefill.estimatedTotal) > 0) {
       noteLines.push(`Calculator estimate: ~$${prefill.estimatedTotal}${prefill.rush ? " (rush requested)" : ""}`);
     }
@@ -109,6 +112,7 @@ export function QuoteForm() {
           <h3 className="text-xl font-semibold text-foreground">Quote request received</h3>
           <p className="mt-2 text-muted">
             Thanks for reaching out. We&apos;ll review your details and get back to you shortly.
+            A confirmation email is on its way to your inbox.
             {profile && (
               <>
                 {" "}

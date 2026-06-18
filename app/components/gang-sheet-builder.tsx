@@ -46,12 +46,21 @@ export function GangSheetBuilder() {
   );
 
   function handleGetQuote() {
-    saveQuotePrefill({
+    const dataUrl = canvasRef.current?.exportPNG();
+    const prefill: Record<string, string | number | boolean> = {
       service: "DTF Gang Sheets",
       quantity: String(qty),
       rush,
       estimatedTotal: total,
-    });
+      gangSheetSize: `${selectedSize.label} (${selectedSize.dimensions})`,
+    };
+
+    if (dataUrl) {
+      prefill.mockupImage = dataUrl;
+      prefill.mockupName = `gang-sheet-${sizeId}-qty${qty}.png`;
+    }
+
+    saveQuotePrefill(prefill);
   }
 
   return (

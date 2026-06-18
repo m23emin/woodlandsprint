@@ -7,6 +7,7 @@ const staticPages = [
   "/blanks",
   "/mockup",
   "/pricing",
+  "/contact",
   "/dtf-transfers",
   "/custom-shirts",
   "/event-bulk",
